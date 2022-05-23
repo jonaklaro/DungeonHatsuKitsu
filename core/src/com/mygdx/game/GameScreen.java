@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
@@ -10,7 +11,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -30,7 +30,7 @@ public class GameScreen extends ScreenAdapter {
 
     int state;
 
-    int[][] hidden = new int[100][100];
+    int[][] hidden;
 
     //Graphics
 
@@ -39,6 +39,8 @@ public class GameScreen extends ScreenAdapter {
 
 
     Player player;
+    Player player2;
+    boolean multi;
     Map mapp;
     Game game;
 
@@ -105,6 +107,12 @@ public class GameScreen extends ScreenAdapter {
 
     private void updateReady () {
         if (Gdx.input.justTouched()) {
+            multi = false;
+            state = GAME_RUNNING;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            multi = true;
+            player2 = new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
             state = GAME_RUNNING;
         }
     }
@@ -123,7 +131,11 @@ public class GameScreen extends ScreenAdapter {
             return;
         }
 
-        player.update(delta);
+        player.update(delta, false);
+
+        if (multi){
+            player2.update(delta, true);
+        }
 
     }
     private void drawPaused(){
@@ -151,6 +163,11 @@ public class GameScreen extends ScreenAdapter {
         camera.update();
 
         player.render(batch,camera);
+
+        if (multi){
+            player2.render(batch,camera);
+        }
+
         Map.drawMap(Settings.map, batch, 1);
         Map.drawMap(hidden,batch, opacity);
 

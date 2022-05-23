@@ -72,26 +72,55 @@ public class Player extends Sprite {
 
     }
 
-    public void input(){
+    public void input(boolean multi){
 
-        direction.set(0,0);
-        if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)){
-            if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)) direction.x = 0;
-            else if (Gdx.input.isKeyPressed(Input.Keys.A)) direction.x = -1;
-            else if (Gdx.input.isKeyPressed(Input.Keys.D)) direction.x = 1;
-            else direction.x = 0;
+        if (!multi){
+            direction.set(0,0);
+            if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)){
+                if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)) direction.x = 0;
+                else if (Gdx.input.isKeyPressed(Input.Keys.A)) direction.x = -1;
+                else if (Gdx.input.isKeyPressed(Input.Keys.D)) direction.x = 1;
+                else direction.x = 0;
 
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !hold && (jumpCount < maxJumps)){
-                hold = true;
-                jumpCount++;
-                playerGrav = 15;
+                if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !hold && (jumpCount < maxJumps)){
+                    hold = true;
+                    jumpCount++;
+                    playerGrav = 15;
 
+                }
             }
+            if (!Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+                hold = false;
+            }
+
+            flipPlayer();
         }
-        if (!Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-            hold = false;
+        if (multi){
+            direction.set(0,0);
+            if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)){
+                if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && Gdx.input.isKeyPressed(Input.Keys.LEFT)) direction.x = 0;
+                else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) direction.x = -1;
+                else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) direction.x = 1;
+                else direction.x = 0;
+
+                if (Gdx.input.isKeyPressed(Input.Keys.UP) && !hold && (jumpCount < maxJumps)){
+                    hold = true;
+                    jumpCount++;
+                    playerGrav = 15;
+
+                }
+            }
+            if (!Gdx.input.isKeyPressed(Input.Keys.UP)){
+                hold = false;
+            }
+
+            flipPlayer();
         }
 
+
+    }
+
+    private void flipPlayer() {
         if (direction.x == -1 && !flipped){
             sprite.flip(true,false);
             flipped = true;
@@ -100,17 +129,16 @@ public class Player extends Sprite {
             sprite.flip(true,false);
             flipped = false;
         }
-
     }
 
-    public void move(float delta){
+    public void move(float delta, boolean multi){
         hitRect.x += direction.x*speed*delta;
 
-        collision("hor");
+        collision("hor", multi);
 
         playerGrav -= gravSpeed*delta;
         hitRect.y += playerGrav;
-        collision("ver");
+        collision("ver", multi);
 
         sprite.setPosition(hitRect.x, hitRect.y);
         midX = sprite.getX()+(sprite.getWidth()*playerScale/2);
@@ -118,27 +146,48 @@ public class Player extends Sprite {
 
     }
 
-    private void collision(String dir){
+    private void collision(String dir, boolean multi){
         if (dir.equals("hor")){
             for (Rectangle border: borderRecs){
                 if (hitRect.overlaps(border)){
 
                     if(direction.x > 0){ //Right
-                        if ((Gdx.input.isKeyPressed(Input.Keys.SPACE)) && boostRight){
-                            jumpCount--;
-                            System.out.println("right");
-                            boostRight = false;
-                            boostLeft = true;
+                        if (!multi){
+                            if ((Gdx.input.isKeyPressed(Input.Keys.SPACE)) && boostRight){
+                                jumpCount--;
+                                System.out.println("right");
+                                boostRight = false;
+                                boostLeft = true;
+                            }
                         }
+                        if (multi){
+                            if ((Gdx.input.isKeyPressed(Input.Keys.UP)) && boostRight){
+                                jumpCount--;
+                                System.out.println("right");
+                                boostRight = false;
+                                boostLeft = true;
+                            }
+                        }
+
                         hitRect.x = border.x-hitRect.width;
                     }
 
                     if(direction.x < 0){ //Left
-                        if ((Gdx.input.isKeyPressed(Input.Keys.SPACE)) && boostLeft){
-                            jumpCount--;
-                            System.out.println("left");
-                            boostRight = true;
-                            boostLeft = false;
+                        if (!multi){
+                            if ((Gdx.input.isKeyPressed(Input.Keys.SPACE)) && boostLeft){
+                                jumpCount--;
+                                System.out.println("left");
+                                boostRight = true;
+                                boostLeft = false;
+                            }
+                        }
+                        if (multi){
+                            if ((Gdx.input.isKeyPressed(Input.Keys.UP)) && boostLeft){
+                                jumpCount--;
+                                System.out.println("left");
+                                boostRight = true;
+                                boostLeft = false;
+                            }
                         }
                         hitRect.x = border.x+(border.width);
                     }
@@ -178,9 +227,9 @@ public class Player extends Sprite {
         }
     }
 
-    public void update(float delta) {
-        input();
-        move(delta);
+    public void update(float delta, boolean multi) {
+        input(multi);
+        move(delta, multi);
     }
 
     public void render(SpriteBatch batch, OrthographicCamera camera) {
