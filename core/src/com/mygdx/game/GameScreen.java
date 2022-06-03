@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -149,7 +150,7 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glDisable(GL30.GL_BLEND);
 
         batch.begin();
-        GameUI.settings(batch, player);
+        GameUI.settings(batch, getCameraPos());
         batch.end();
     }
 
@@ -158,7 +159,7 @@ public class GameScreen extends ScreenAdapter {
 
         backgroundSprite.draw(batch);
 
-        camera.position.set(player.midX,player.midY,0);
+        camera.position.set(getCameraPos(),0);
 
         camera.update();
 
@@ -173,9 +174,18 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-        backgroundSprite.setPosition((float) (player.getX()/1.5)-2*tilesize*graphicScale,(player.getY()/2)-5*tilesize*graphicScale);
+        backgroundSprite.setPosition((float) (getCameraPos().x/1.5)-2*tilesize*graphicScale,(getCameraPos().y/2)-5*tilesize*graphicScale);
 
         batch.end();
+    }
+
+    private Vector2 getCameraPos(){
+        if (!multi){
+            return new Vector2(player.midX,player.midY);
+        }
+        float x = (player.midX+player2.midX)/2;
+        float y = (player.midY+player2.midY)/2;
+        return new Vector2(x,y);
     }
 
     private void drawReady() {

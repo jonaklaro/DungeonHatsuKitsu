@@ -11,18 +11,16 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
-public class Player extends Sprite {
-    Texture texture;
-    Sprite sprite;
-    Rectangle hitRect;
+public class Player extends Entity {
+
     Vector2 direction = new Vector2();
     ShapeRenderer sr;
 
     public float midX;
     public float midY;
 
-    float playerGrav;
-    double gravSpeed = 42;
+
+
     int jumpCount;
     boolean jumped = false;
     boolean boostRight = false;
@@ -36,20 +34,19 @@ public class Player extends Sprite {
     int[][] borders;
     int[][] hidden;
 
-    ArrayList<Rectangle> borderRecs;
-    ArrayList<Rectangle> hiddenRecs;
+
     Rectangle rec;
 
     int tilesize = Settings.tilesize;
     int graphicScale = Settings.graphicScale;
-    float playerScale = 0.4f;
+    float playerScale = 1;
 
     boolean flipped;
 
     public Player(Vector2 pos) {
         float posX = pos.x;
         float posY = pos.y;
-        texture = new Texture("character.png");
+        texture = new Texture("character/char_small.png");
         sprite = new Sprite(texture);
         sprite.setOrigin(0,0);
         sprite.setScale(playerScale);
@@ -57,10 +54,10 @@ public class Player extends Sprite {
         sprite.setPosition(posX, posY); // random
         hitRect = new Rectangle(posX,posY,sprite.getWidth()*playerScale,sprite.getHeight()*playerScale);
 
-        playerGrav = 0;
+        gravity = 0;
         start = new Vector2(posX,posY);
 
-        Map map = new Map();
+        map = new Map();
         borderRecs = new ArrayList<>();
         borders = map.readMap("assets/maps/newLevel_borders.csv");
         hidden = map.readMap("assets/maps/newLevel_hidden_obj.csv");
@@ -85,7 +82,7 @@ public class Player extends Sprite {
                 if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !hold && (jumpCount < maxJumps)){
                     hold = true;
                     jumpCount++;
-                    playerGrav = 15;
+                    gravity = 15;
 
                 }
             }
@@ -106,7 +103,7 @@ public class Player extends Sprite {
                 if (Gdx.input.isKeyPressed(Input.Keys.UP) && !hold && (jumpCount < maxJumps)){
                     hold = true;
                     jumpCount++;
-                    playerGrav = 15;
+                    gravity = 15;
 
                 }
             }
@@ -136,8 +133,8 @@ public class Player extends Sprite {
 
         collision("hor", multi);
 
-        playerGrav -= gravSpeed*delta;
-        hitRect.y += playerGrav;
+        gravity -= gravSpeed*delta;
+        hitRect.y += gravity;
         collision("ver", multi);
 
         sprite.setPosition(hitRect.x, hitRect.y);
@@ -200,12 +197,12 @@ public class Player extends Sprite {
         if (dir.equals("ver")){
             for (Rectangle border: borderRecs){
                 if (border.overlaps(hitRect)){
-                    if(playerGrav > 0){ //Up
-                        playerGrav = 0;
+                    if(gravity > 0){ //Up
+                        gravity = 0;
                         hitRect.y = sprite.getY();
                     }
-                    else if(playerGrav <= 0){ //Down
-                        playerGrav = 0;
+                    else if(gravity <= 0){ //Down
+                        gravity = 0;
                         hitRect.y = border.y+(border.height);
                         jumpCount = 0;
                         jumped = false;
@@ -218,6 +215,7 @@ public class Player extends Sprite {
         }
         for (Rectangle hidden: hiddenRecs){
             if (hitRect.overlaps(hidden)){
+
                 GameScreen.opacity = 0.75f;
                 break;
             }
