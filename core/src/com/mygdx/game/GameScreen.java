@@ -31,7 +31,9 @@ public class GameScreen extends ScreenAdapter {
 
     int state;
 
+
     int[][] hidden;
+    int[][] map;
 
     //Graphics
 
@@ -41,6 +43,8 @@ public class GameScreen extends ScreenAdapter {
 
     Player player;
     Player player2;
+    Enemy enemy1;
+
     boolean multi;
     Map mapp;
     Game game;
@@ -54,14 +58,16 @@ public class GameScreen extends ScreenAdapter {
         batch = new SpriteBatch();
         tileMap = new Texture("forrest.png");
         mapp = new Map();
+        Map.load();
 
         shapeRenderer = new ShapeRenderer();
         camera = new OrthographicCamera();
 
-        Settings.map = mapp.readMap("assets/maps/newLevel_map.csv");
-        hidden = mapp.readMap("assets/maps/newLevel_hidden_obj.csv");
+        map = Map.mapp;
+        hidden = Map.hidden;
 
         player = new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
+        enemy1 = new Enemy(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
         camera.position.set(player.getPosition(),0);
         camera.zoom = 0.5F;
 
@@ -133,6 +139,7 @@ public class GameScreen extends ScreenAdapter {
         }
 
         player.update(delta, false);
+        enemy1.update(delta);
 
         if (multi){
             player2.update(delta, true);
@@ -163,13 +170,14 @@ public class GameScreen extends ScreenAdapter {
 
         camera.update();
 
-        player.render(batch,camera);
+        player.render(batch, camera);
+        enemy1.render(batch, camera);
 
         if (multi){
             player2.render(batch,camera);
         }
 
-        Map.drawMap(Settings.map, batch, 1);
+        Map.drawMap(map, batch, 1);
         Map.drawMap(hidden,batch, opacity);
 
 

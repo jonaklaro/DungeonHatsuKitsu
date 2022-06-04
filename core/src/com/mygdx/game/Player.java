@@ -1,25 +1,10 @@
 package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.ArrayList;
-
 public class Player extends Entity {
-
-    Vector2 direction = new Vector2();
-    ShapeRenderer sr;
-
-    public float midX;
-    public float midY;
-
-
 
     int jumpCount;
     boolean jumped = false;
@@ -27,46 +12,11 @@ public class Player extends Entity {
     boolean boostLeft = false;
     int maxJumps = 1;
 
-    int speed = 300;
-
-    Vector2 start;
     boolean hold = false;
-    int[][] borders;
-    int[][] hidden;
 
-
-    Rectangle rec;
-
-    int tilesize = Settings.tilesize;
-    int graphicScale = Settings.graphicScale;
-    float playerScale = 1;
-
-    boolean flipped;
 
     public Player(Vector2 pos) {
-        float posX = pos.x;
-        float posY = pos.y;
-        texture = new Texture("character/char_small.png");
-        sprite = new Sprite(texture);
-        sprite.setOrigin(0,0);
-        sprite.setScale(playerScale);
-
-        sprite.setPosition(posX, posY); // random
-        hitRect = new Rectangle(posX,posY,sprite.getWidth()*playerScale,sprite.getHeight()*playerScale);
-
-        gravity = 0;
-        start = new Vector2(posX,posY);
-
-        map = new Map();
-        borderRecs = new ArrayList<>();
-        borders = map.readMap("assets/maps/newLevel_borders.csv");
-        hidden = map.readMap("assets/maps/newLevel_hidden_obj.csv");
-
-        sr = new ShapeRenderer();
-
-        borderRecs = createRectList(borders);
-        hiddenRecs = createRectList(hidden);
-
+        super(pos, "character/char_small.png");
     }
 
     public void input(boolean multi){
@@ -117,17 +67,6 @@ public class Player extends Entity {
 
     }
 
-    private void flipPlayer() {
-        if (direction.x == -1 && !flipped){
-            sprite.flip(true,false);
-            flipped = true;
-        }
-        if (direction.x == 1 && flipped){
-            sprite.flip(true,false);
-            flipped = false;
-        }
-    }
-
     public void move(float delta, boolean multi){
         hitRect.x += direction.x*speed*delta;
 
@@ -143,49 +82,41 @@ public class Player extends Entity {
 
     }
 
+    private void walljump(boolean multi, boolean boost){
+
+        boolean dir;
+        dir = direction.x > 0;
+
+        if (!multi){
+            if ((Gdx.input.isKeyPressed(Input.Keys.SPACE)) && boost){
+                jumpCount--;
+                boostRight = !dir;
+                boostLeft = dir;
+            }
+        }
+        if (multi){
+            if ((Gdx.input.isKeyPressed(Input.Keys.UP)) && boost){
+                jumpCount--;
+                boostRight = !dir;
+                boostLeft = dir;
+            }
+        }
+    }
+
     private void collision(String dir, boolean multi){
         if (dir.equals("hor")){
             for (Rectangle border: borderRecs){
                 if (hitRect.overlaps(border)){
 
                     if(direction.x > 0){ //Right
-                        if (!multi){
-                            if ((Gdx.input.isKeyPressed(Input.Keys.SPACE)) && boostRight){
-                                jumpCount--;
-                                System.out.println("right");
-                                boostRight = false;
-                                boostLeft = true;
-                            }
-                        }
-                        if (multi){
-                            if ((Gdx.input.isKeyPressed(Input.Keys.UP)) && boostRight){
-                                jumpCount--;
-                                System.out.println("right");
-                                boostRight = false;
-                                boostLeft = true;
-                            }
-                        }
+                        walljump(multi, boostRight);
 
                         hitRect.x = border.x-hitRect.width;
                     }
 
                     if(direction.x < 0){ //Left
-                        if (!multi){
-                            if ((Gdx.input.isKeyPressed(Input.Keys.SPACE)) && boostLeft){
-                                jumpCount--;
-                                System.out.println("left");
-                                boostRight = true;
-                                boostLeft = false;
-                            }
-                        }
-                        if (multi){
-                            if ((Gdx.input.isKeyPressed(Input.Keys.UP)) && boostLeft){
-                                jumpCount--;
-                                System.out.println("left");
-                                boostRight = true;
-                                boostLeft = false;
-                            }
-                        }
+                        walljump(multi, boostLeft);
+
                         hitRect.x = border.x+(border.width);
                     }
                     if (!jumped){
@@ -228,39 +159,5 @@ public class Player extends Entity {
     public void update(float delta, boolean multi) {
         input(multi);
         move(delta, multi);
-    }
-
-    public void render(SpriteBatch batch, OrthographicCamera camera) {
-        batch.setProjectionMatrix(camera.combined);
-
-        sprite.draw(batch);
-    }
-
-    public Vector2 getPosition(){
-        return new Vector2(sprite.getX(), sprite.getY());
-    }
-
-    public float getX(){
-        return sprite.getX();
-    }
-
-    public float getY(){
-        return sprite.getY();
-    }
-
-    private ArrayList<Rectangle> createRectList(int[][] map){
-        ArrayList<Rectangle> recs = new ArrayList<>();
-        for (int row = 0; row < map.length; row++) {
-            for (int col = 0; col < map[row].length; col++){
-                if(map[row][col] != -1){
-                    float x = (col*tilesize*graphicScale+20);
-                    float y = (float) (-(row)*tilesize*graphicScale);
-                    rec = new Rectangle(x, y, (float) (tilesize*graphicScale-40),(float) (tilesize*graphicScale));
-//                    rec = new Rectangle((col*tilesize*graphicScale-tilesize*2), (float) (-(row)*tilesize*graphicScale-(tilesize*3)), (float) (tilesize*graphicScale*1.5),(float) (tilesize*graphicScale*1.75));
-                    recs.add(rec);
-                }
-            }
-        }
-        return recs;
     }
 }

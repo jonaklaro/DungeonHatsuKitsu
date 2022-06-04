@@ -10,14 +10,16 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
 public class Map extends Sprite {
-    BufferedReader br;
+    static BufferedReader br;
     static int numCol;
     static int numRow;
     public float playerX;
     public float playerY;
     Texture tileMap;
     static Sprite spriteMap;
-    int[][] mapp;
+    static int[][] mapp;
+    static int[][] borders;
+    static int[][] hidden;
     static int tilesize = Settings.tilesize;
     static int graphicScale = Settings.graphicScale;
 
@@ -26,11 +28,16 @@ public class Map extends Sprite {
         spriteMap = new Sprite(tileMap);
         numCol = Settings.numCol;
         numRow = Settings.numRow;
-        getPlayer("assets/maps/newLevel_entities.csv");
 
     }
 
-    public int[][] readMap(String path){
+    public static void load(){
+        borders = readMap("assets/maps/newLevel_borders.csv");
+        hidden = readMap("assets/maps/newLevel_hidden_obj.csv");
+        mapp = readMap("assets/maps/newLevel_map.csv");
+    }
+
+    public static int[][] readMap(String path){
         mapp = new int[40][60];
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
