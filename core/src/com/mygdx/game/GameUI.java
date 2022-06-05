@@ -37,6 +37,7 @@ public class GameUI extends Sprite {
     }
 
     static void drawStats(SpriteBatch batch, Player player, Vector2 pos){
+        font.setUseIntegerPositions(false);
         font.draw(batch, Integer.toString(player.health), pos.x-Settings.width/4f, pos.y+Settings.height/5f);
     }
 }

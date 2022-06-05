@@ -19,7 +19,6 @@ public class GameScreen extends ScreenAdapter {
 
     // Imports
     SpriteBatch batch;
-    Texture tileMap;
     Texture background;
     Sprite backgroundSprite;
     OrthographicCamera camera;
@@ -57,7 +56,6 @@ public class GameScreen extends ScreenAdapter {
         this.game = game;
         state = GAME_READY;
         batch = new SpriteBatch();
-        tileMap = new Texture("forrest.png");
         mapp = new Map();
         Map.load();
 
@@ -198,6 +196,7 @@ public class GameScreen extends ScreenAdapter {
 
         Map.drawMap(map, batch, 1);
         Map.drawMap(hidden,batch, opacity);
+
         GameUI.drawStats(batch, player, getCameraPos());
 
 
@@ -236,7 +235,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void dispose () {
         batch.dispose();
-        tileMap.dispose();
+        background.dispose();
     }
 
     @Override

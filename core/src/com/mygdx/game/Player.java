@@ -17,6 +17,7 @@ public class Player extends Entity {
     boolean boostRight = false;
     boolean boostLeft = false;
     int maxJumps = 1;
+    float color = 1;
 
     boolean hold = false;
 
@@ -52,12 +53,10 @@ public class Player extends Entity {
                 hold = false;
             }
             if (kb != KeyBlock.NO_BLOCK){
-                if (kb == KeyBlock.LEFT && !Gdx.input.isKeyPressed(Input.Keys.A)){
+                if ((kb == KeyBlock.LEFT && !Gdx.input.isKeyPressed(Input.Keys.A)) || (kb == KeyBlock.RIGHT && !Gdx.input.isKeyPressed(Input.Keys.D))){
                     kb = KeyBlock.NO_BLOCK;
                 }
-                if (kb == KeyBlock.RIGHT && !Gdx.input.isKeyPressed(Input.Keys.D)){
-                    kb = KeyBlock.NO_BLOCK;
-                }
+
             }
 
             flipPlayer();
@@ -99,6 +98,17 @@ public class Player extends Entity {
         sprite.setPosition(hitRect.x, hitRect.y);
         midX = sprite.getX()+(sprite.getWidth()*playerScale/2);
         midY = sprite.getY()+(sprite.getHeight()*playerScale/2);
+
+        drawHurt();
+    }
+
+    private void drawHurt(){
+        if (color >= 1){
+            color = 1;
+        } else {
+            color += health/200f;
+        }
+        sprite.setColor(1,color,color,1);
 
     }
 
@@ -157,7 +167,7 @@ public class Player extends Entity {
                         hitRect.x = enemy.x+(enemy.width)+throwback;
                     }
                     health -= 1;
-//                    break;
+                    color = 0;
                 }
             }
         }
@@ -191,6 +201,7 @@ public class Player extends Entity {
                         hitRect.y = enemy.y+(enemy.height)+throwback;
                     }
                     health -= 1;
+                    color = 0;
                 }
             }
         }

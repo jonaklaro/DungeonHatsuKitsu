@@ -122,4 +122,5 @@ public class Entity extends Sprite {
     public float getY(){
         return sprite.getY();
     }
+
 }
