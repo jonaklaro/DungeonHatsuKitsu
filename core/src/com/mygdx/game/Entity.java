@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -23,6 +22,7 @@ public class Entity extends Sprite {
     int speed = 300;
     public float midX;
     public float midY;
+    int health;
 
     Map map;
     static ArrayList<Rectangle> borderRecs;

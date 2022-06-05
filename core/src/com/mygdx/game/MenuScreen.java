@@ -37,9 +37,9 @@ public class MenuScreen extends ScreenAdapter {
     @Override
     public void render (float delta) {
 
-        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)){
+//        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)){
             game.setScreen(new GameScreen(game));
-        }
+//        }
 
         ScreenUtils.clear(0.5f, 0.5f, 0.5f, 1);
         batch.begin();

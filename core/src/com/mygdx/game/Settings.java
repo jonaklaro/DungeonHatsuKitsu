@@ -6,4 +6,7 @@ public class Settings {
     static int tilesize = 16;
     static int numCol = 12;
     static int numRow = 12;
+    static int width;
+    static int height;
+
 }

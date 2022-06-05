@@ -6,6 +6,12 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player extends Entity {
 
+    enum KeyBlock{
+        NO_BLOCK,
+        RIGHT,
+        LEFT
+    }
+
     int jumpCount;
     boolean jumped = false;
     boolean boostRight = false;
@@ -14,9 +20,13 @@ public class Player extends Entity {
 
     boolean hold = false;
 
+    KeyBlock kb;
+
 
     public Player(Vector2 pos) {
         super(pos, "character/char_small.png");
+        kb = KeyBlock.NO_BLOCK;
+        health = 10;
         sprite.setScale( .5f,1);
         sprite.setRegion(10,3,34,61);
     }
@@ -27,8 +37,8 @@ public class Player extends Entity {
             direction.set(0,0);
             if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)){
                 if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)) direction.x = 0;
-                else if (Gdx.input.isKeyPressed(Input.Keys.A)) direction.x = -1;
-                else if (Gdx.input.isKeyPressed(Input.Keys.D)) direction.x = 1;
+                else if (Gdx.input.isKeyPressed(Input.Keys.A) && (kb != KeyBlock.LEFT)) direction.x = -1;
+                else if (Gdx.input.isKeyPressed(Input.Keys.D) && (kb != KeyBlock.RIGHT)) direction.x = 1;
                 else direction.x = 0;
 
                 if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !hold && (jumpCount < maxJumps)){
@@ -40,6 +50,14 @@ public class Player extends Entity {
             }
             if (!Gdx.input.isKeyPressed(Input.Keys.SPACE)){
                 hold = false;
+            }
+            if (kb != KeyBlock.NO_BLOCK){
+                if (kb == KeyBlock.LEFT && !Gdx.input.isKeyPressed(Input.Keys.A)){
+                    kb = KeyBlock.NO_BLOCK;
+                }
+                if (kb == KeyBlock.RIGHT && !Gdx.input.isKeyPressed(Input.Keys.D)){
+                    kb = KeyBlock.NO_BLOCK;
+                }
             }
 
             flipPlayer();
@@ -106,6 +124,7 @@ public class Player extends Entity {
     }
 
     private void collision(String dir, boolean multi){
+        int throwback = 10;
         if (dir.equals("hor")){
             for (Rectangle border: borderRecs){
                 if (hitRect.overlaps(border)){
@@ -126,18 +145,19 @@ public class Player extends Entity {
                     }
                 }
             }
-
             for (Rectangle enemy: enemyList){
                 if (hitRect.overlaps(enemy)){
                     if(direction.x > 0){ //Right
-
-                        hitRect.x = enemy.x-hitRect.width;
+                        kb = KeyBlock.RIGHT;
+                        hitRect.x = enemy.x-hitRect.width-throwback;
                     }
 
                     if(direction.x < 0){ //Left
-
-                        hitRect.x = enemy.x+(enemy.width);
+                        kb = KeyBlock.LEFT;
+                        hitRect.x = enemy.x+(enemy.width)+throwback;
                     }
+                    health -= 1;
+//                    break;
                 }
             }
         }
@@ -157,6 +177,20 @@ public class Player extends Entity {
                         boostLeft = true;
                     }
 
+                }
+            }
+            for (Rectangle enemy: enemyList){
+                if (hitRect.overlaps(enemy)){
+                    if(gravity > 0){ //Up
+                        gravity = 0;
+                        hitRect.y = sprite.getY()-throwback;
+                    }
+
+                    else if(gravity <= 0){ //Down
+                        gravity = 10;
+                        hitRect.y = enemy.y+(enemy.height)+throwback;
+                    }
+                    health -= 1;
                 }
             }
         }

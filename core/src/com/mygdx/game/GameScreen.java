@@ -79,6 +79,9 @@ public class GameScreen extends ScreenAdapter {
         background = new Texture("background.png");
         backgroundSprite = new Sprite(background);
         backgroundSprite.scale(20);
+        GameUI.setup();
+        Settings.width = Gdx.graphics.getWidth();
+        Settings.height = Gdx.graphics.getHeight();
     }
 
     @Override
@@ -100,6 +103,9 @@ public class GameScreen extends ScreenAdapter {
             case GAME_PAUSED:
                 updatePaused(deltaTime);
                 break;
+            case GAME_OVER:
+                game.setScreen(new MenuScreen(game));
+//                state = GAME_READY;
         }
     }
 
@@ -153,6 +159,7 @@ public class GameScreen extends ScreenAdapter {
             player2.update(delta, true);
         }
 
+        if (player.health <= 0) state = GAME_OVER;
     }
     private void drawPaused(){
         drawRunning();
@@ -179,7 +186,7 @@ public class GameScreen extends ScreenAdapter {
         camera.update();
 
         player.render(batch, camera);
-//        GameUI.drawStats(batch, player);
+
 
         if (multi){
             player2.render(batch,camera);
@@ -192,10 +199,12 @@ public class GameScreen extends ScreenAdapter {
 
         Map.drawMap(map, batch, 1);
         Map.drawMap(hidden,batch, opacity);
+        GameUI.drawStats(batch, player, getCameraPos());
 
 
 
         backgroundSprite.setPosition((float) (getCameraPos().x/1.5)-2*tilesize*graphicScale,(getCameraPos().y/2)-5*tilesize*graphicScale);
+
 
         batch.end();
     }
