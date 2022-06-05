@@ -28,8 +28,7 @@ public class GameScreen extends ScreenAdapter {
     static final int GAME_READY = 0;
     static final int GAME_RUNNING = 1;
     static final int GAME_PAUSED = 2;
-    static final int GAME_LEVEL_END = 3;
-    static final int GAME_OVER = 4;
+    static final int GAME_OVER = 3;
 
     int state;
 
