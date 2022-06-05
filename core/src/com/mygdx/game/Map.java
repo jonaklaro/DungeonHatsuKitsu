@@ -87,7 +87,7 @@ public class Map extends Sprite {
     public ArrayList<Enemy> getEnemies(String path, ArrayList<Enemy> enemyArrayList) {
         mapp = new int[100][100];
 
-        Vector2 pos = null;
+        Vector2 pos;
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
             for (int row = 0; row < mapp.length; row++) {
