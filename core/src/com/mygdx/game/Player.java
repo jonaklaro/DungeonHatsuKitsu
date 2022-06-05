@@ -17,6 +17,8 @@ public class Player extends Entity {
 
     public Player(Vector2 pos) {
         super(pos, "character/char_small.png");
+        sprite.setScale( .5f,1);
+        sprite.setRegion(10,3,34,61);
     }
 
     public void input(boolean multi){
@@ -121,6 +123,20 @@ public class Player extends Entity {
                     }
                     if (!jumped){
                         jumped = true;
+                    }
+                }
+            }
+
+            for (Rectangle enemy: enemyList){
+                if (hitRect.overlaps(enemy)){
+                    if(direction.x > 0){ //Right
+
+                        hitRect.x = enemy.x-hitRect.width;
+                    }
+
+                    if(direction.x < 0){ //Left
+
+                        hitRect.x = enemy.x+(enemy.width);
                     }
                 }
             }

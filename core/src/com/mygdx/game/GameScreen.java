@@ -13,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.ArrayList;
+
 public class GameScreen extends ScreenAdapter {
 
     // Imports
@@ -43,7 +45,6 @@ public class GameScreen extends ScreenAdapter {
 
     Player player;
     Player player2;
-    Enemy enemy1;
 
     boolean multi;
     Map mapp;
@@ -51,6 +52,7 @@ public class GameScreen extends ScreenAdapter {
 
     public static float opacity = 1;
 
+    ArrayList<Enemy> enemies;
 
     public GameScreen(Game game) {
         this.game = game;
@@ -67,7 +69,10 @@ public class GameScreen extends ScreenAdapter {
         hidden = Map.hidden;
 
         player = new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
-        enemy1 = new Enemy(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
+
+        enemies = new ArrayList<>();
+        enemies = mapp.getEnemies("assets/maps/newLevel_enemies.csv", enemies);
+
         camera.position.set(player.getPosition(),0);
         camera.zoom = 0.5F;
 
@@ -139,7 +144,10 @@ public class GameScreen extends ScreenAdapter {
         }
 
         player.update(delta, false);
-        enemy1.update(delta);
+
+        for (Enemy e: enemies) {
+            e.update(delta);
+        }
 
         if (multi){
             player2.update(delta, true);
@@ -171,11 +179,16 @@ public class GameScreen extends ScreenAdapter {
         camera.update();
 
         player.render(batch, camera);
-        enemy1.render(batch, camera);
+//        GameUI.drawStats(batch, player);
 
         if (multi){
             player2.render(batch,camera);
         }
+
+        for (Enemy e: enemies) {
+            e.render(batch, camera);
+        }
+
 
         Map.drawMap(map, batch, 1);
         Map.drawMap(hidden,batch, opacity);

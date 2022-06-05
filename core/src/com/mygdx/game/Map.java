@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class Map extends Sprite {
     static BufferedReader br;
@@ -20,6 +21,7 @@ public class Map extends Sprite {
     static int[][] mapp;
     static int[][] borders;
     static int[][] hidden;
+    static int[][] enemies;
     static int tilesize = Settings.tilesize;
     static int graphicScale = Settings.graphicScale;
 
@@ -32,6 +34,8 @@ public class Map extends Sprite {
     }
 
     public static void load(){
+        enemies = readMap("assets/maps/newLevel_enemies.csv");
+
         borders = readMap("assets/maps/newLevel_borders.csv");
         hidden = readMap("assets/maps/newLevel_hidden_obj.csv");
         mapp = readMap("assets/maps/newLevel_map.csv");
@@ -78,6 +82,32 @@ public class Map extends Sprite {
             e.printStackTrace();
         }
         return pos;
+    }
+
+    public ArrayList<Enemy> getEnemies(String path, ArrayList<Enemy> enemyArrayList) {
+        mapp = new int[100][100];
+
+        Vector2 pos = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+            for (int row = 0; row < mapp.length; row++) {
+                String line = br.readLine();
+                String[] tokens = line.split(",");
+
+                for (int col = 0; col < mapp[row].length; col++) {
+                    if (!tokens[col].equals("-1")) {
+                        playerX = col * Settings.tilesize * Settings.graphicScale;
+                        playerY = -row * Settings.tilesize * Settings.graphicScale;
+                        pos = new Vector2( playerX,playerY);
+                        enemyArrayList.add(new Enemy(pos));
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return enemyArrayList;
     }
 
     public static void drawMap(int[][] map, SpriteBatch batch, float opacity){

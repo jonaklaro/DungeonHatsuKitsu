@@ -27,6 +27,7 @@ public class Entity extends Sprite {
     Map map;
     static ArrayList<Rectangle> borderRecs;
     static ArrayList<Rectangle> hiddenRecs;
+    static ArrayList<Rectangle> enemyList = new ArrayList<>();
 
     Rectangle rec;
 
@@ -35,6 +36,7 @@ public class Entity extends Sprite {
 
     int[][] borders;
     int[][] hidden;
+    int[][] enemies;
 
     float posX;
     float posY;
@@ -46,6 +48,8 @@ public class Entity extends Sprite {
         createSprite(spriteLink);
 
         sprite.setPosition(posX, posY); // random
+
+
         hitRect = new Rectangle(posX,posY,sprite.getWidth()*playerScale,sprite.getHeight()*playerScale);
 
         gravity = 0;
@@ -57,9 +61,12 @@ public class Entity extends Sprite {
         Settings.map = Map.mapp;
         borders = Map.borders;
         hidden = Map.hidden;
+        enemies = Map.enemies;
+
 
         borderRecs = createRectList(borders);
         hiddenRecs = createRectList(hidden);
+        enemyList = createRectList(enemies);
 
     }
 
@@ -78,7 +85,8 @@ public class Entity extends Sprite {
         texture = new Texture(link);
         sprite = new Sprite(texture);
         sprite.setOrigin(0,0);
-        sprite.setScale(playerScale);
+
+//        sprite.setScale(playerScale);
     }
 
     ArrayList<Rectangle> createRectList(int[][] map){
@@ -86,9 +94,9 @@ public class Entity extends Sprite {
         for (int row = 0; row < map.length; row++) {
             for (int col = 0; col < map[row].length; col++){
                 if(map[row][col] != -1){
-                    float x = (col*tilesize*graphicScale+20);
+                    float x = (col*tilesize*graphicScale)+34;
                     float y = (float) (-(row)*tilesize*graphicScale);
-                    rec = new Rectangle(x, y, (float) (tilesize*graphicScale-40),(float) (tilesize*graphicScale));
+                    rec = new Rectangle(x, y, (float) (tilesize*graphicScale)-34,(float) (tilesize*graphicScale));
                     //                    rec = new Rectangle((col*tilesize*graphicScale-tilesize*2), (float) (-(row)*tilesize*graphicScale-(tilesize*3)), (float) (tilesize*graphicScale*1.5),(float) (tilesize*graphicScale*1.75));
                     recs.add(rec);
                 }

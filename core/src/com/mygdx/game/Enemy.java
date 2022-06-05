@@ -3,10 +3,16 @@ package com.mygdx.game;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.ArrayList;
+
 public class Enemy extends Entity{
     public Enemy(Vector2 pos) {
         super(pos, "enemy/enemy.png");
-        direction.x = -1;
+        sprite.setScale(1,1);
+        sprite.setRegion(0,0,64,64);
+
+//        direction.x = -1;
+
     }
 
     public void update(float delta){
@@ -40,7 +46,7 @@ public class Enemy extends Entity{
 
                         hitRect.x = border.x+(border.width);
                     }
-                    direction.x = direction.x*(-1);
+//                    direction.x = direction.x*(-1);
 
                 }
             }
