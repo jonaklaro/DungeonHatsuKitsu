@@ -45,7 +45,7 @@ public class Entity extends Sprite {
         posX = pos.x;
         posY = pos.y;
 
-        createSprite(spriteLink);
+        sprite = createSprite(spriteLink);
 
         sprite.setPosition(posX, posY); // random
 
@@ -81,11 +81,12 @@ public class Entity extends Sprite {
         }
     }
 
-    void createSprite(String link){
+    Sprite createSprite(String link){
         texture = new Texture(link);
         sprite = new Sprite(texture);
         sprite.setOrigin(0,0);
 
+        return sprite;
 //        sprite.setScale(playerScale);
     }
 
@@ -97,12 +98,60 @@ public class Entity extends Sprite {
                     float x = (col*tilesize*graphicScale)+34;
                     float y = (float) (-(row)*tilesize*graphicScale);
                     rec = new Rectangle(x, y, (float) (tilesize*graphicScale)-34,(float) (tilesize*graphicScale));
-                    //                    rec = new Rectangle((col*tilesize*graphicScale-tilesize*2), (float) (-(row)*tilesize*graphicScale-(tilesize*3)), (float) (tilesize*graphicScale*1.5),(float) (tilesize*graphicScale*1.75));
+//                    rec = new Rectangle((col*tilesize*graphicScale-tilesize*2), (float) (-(row)*tilesize*graphicScale-(tilesize*3)), (float) (tilesize*graphicScale*1.5),(float) (tilesize*graphicScale*1.75));
                     recs.add(rec);
                 }
             }
         }
         return recs;
+    }
+
+    void move(float delta){
+        hitRect.x += direction.x*speed*delta;
+
+        collision("hor");
+
+        gravity -= gravSpeed*delta;
+        hitRect.y += gravity;
+        collision("ver");
+
+        sprite.setPosition(hitRect.x, hitRect.y);
+        midX = sprite.getX()+(sprite.getWidth()*playerScale/2);
+        midY = sprite.getY()+(sprite.getHeight()*playerScale/2);
+    }
+
+    private void collision(String dir){
+        if (dir.equals("hor")){
+            for (Rectangle border: borderRecs){
+                if (hitRect.overlaps(border)){
+                    if(direction.x > 0){ //Right
+
+                        hitRect.x = border.x-hitRect.width;
+                    }
+
+                    if(direction.x < 0){ //Left
+
+                        hitRect.x = border.x+(border.width);
+                    }
+                    //                    direction.x = direction.x*(-1);
+
+                }
+            }
+        }
+        if (dir.equals("ver")){
+            for (Rectangle border: borderRecs){
+                if (border.overlaps(hitRect)){
+                    if(gravity > 0){ //Up
+                        gravity = 0;
+                        hitRect.y = sprite.getY();
+                    }
+                    else if(gravity <= 0){ //Down
+                        gravity = 0;
+                        hitRect.y = border.y+(border.height);
+                    }
+                }
+            }
+        }
     }
 
     public void render(SpriteBatch batch, OrthographicCamera camera) {

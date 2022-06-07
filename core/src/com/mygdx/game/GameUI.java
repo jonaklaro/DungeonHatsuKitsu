@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -20,24 +21,27 @@ public class GameUI extends Sprite {
 
 
     public static void setup(){
-        fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/calibril.ttf"));
+        fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts\\8-bit-operator\\8bitOperatorPlus-Regular.ttf"));
         fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        fontParameter.size = 50;
-        fontParameter.borderWidth = 5;
+        fontParameter.size = 30;
+        fontParameter.borderWidth = 1;
         fontParameter.borderColor = Color.BLACK;
         fontParameter.color = Color.WHITE;
         font = fontGenerator.generateFont(fontParameter);
     }
 
-    public static void settings(SpriteBatch batch, Vector2 cam){
-        setSprite.setScale(4);
+    public static void settings(SpriteBatch batch, Camera cam){
+        float zoom = GameScreen.zoom;
+
+        setSprite.setScale(zoom*8);
         setSprite.setOrigin(0,0);
-        setSprite.setPosition(cam.x-setSprite.getWidth()*graphicScale/2, cam.y-setSprite.getHeight()*graphicScale/2);
+        System.out.println(cam.position+", "+zoom);
+        setSprite.setPosition(cam.position.x-setSprite.getWidth()*zoom*4, cam.position.y-setSprite.getHeight()*zoom*4);
         setSprite.draw(batch);
     }
 
-    static void drawStats(SpriteBatch batch, Player player, Vector2 pos){
+    static void drawText(SpriteBatch batch, String text, float x, float y){
         font.setUseIntegerPositions(false);
-        font.draw(batch, Integer.toString(player.health), pos.x-Settings.width/4f, pos.y+Settings.height/5f);
+        font.draw(batch, text, x, y-font.getCapHeight());
     }
 }

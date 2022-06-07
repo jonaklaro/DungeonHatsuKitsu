@@ -22,6 +22,9 @@ public class GameScreen extends ScreenAdapter {
     Texture background;
     Sprite backgroundSprite;
     OrthographicCamera camera;
+    public static float zoom;
+    public static int minDist;
+    public static int distFactor;
     ShapeRenderer shapeRenderer;
 
     static final int GAME_READY = 0;
@@ -40,10 +43,6 @@ public class GameScreen extends ScreenAdapter {
     float graphicScale = Settings.graphicScale;
     int tilesize = Settings.tilesize;
 
-
-    Player player;
-    Player player2;
-
     boolean multi;
     Map mapp;
     Game game;
@@ -51,6 +50,10 @@ public class GameScreen extends ScreenAdapter {
     public static float opacity = 1;
 
     ArrayList<Enemy> enemies;
+    ArrayList<Player> players;
+
+    Texture titleTexture;
+    Sprite titleSprite;
 
     public GameScreen(Game game) {
         this.game = game;
@@ -65,13 +68,16 @@ public class GameScreen extends ScreenAdapter {
         map = Map.mapp;
         hidden = Map.hidden;
 
-        player = new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
-
+//        player = new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
+        players = new ArrayList<>();
         enemies = new ArrayList<>();
         enemies = mapp.getEnemies("assets/maps/newLevel_enemies.csv", enemies);
 
-        camera.position.set(player.getPosition(),0);
-        camera.zoom = 0.5F;
+        camera.position.set(mapp.getPlayer("assets/maps/newLevel_entities.csv"),0);
+        minDist = 500;
+        distFactor = 2000;
+        zoom = (float) minDist/distFactor*2;
+        camera.zoom = zoom;
 
         background = new Texture("background.png");
         backgroundSprite = new Sprite(background);
@@ -79,6 +85,11 @@ public class GameScreen extends ScreenAdapter {
         GameUI.setup();
         Settings.width = Gdx.graphics.getWidth();
         Settings.height = Gdx.graphics.getHeight();
+
+        titleTexture = new Texture("title.png");
+        titleSprite = new Sprite(titleTexture);
+        titleSprite.scale(8);
+        titleSprite.setPosition(camera.position.x+titleSprite.getWidth()/2,-camera.position.y/2-titleSprite.getHeight()/2);
     }
 
     @Override
@@ -124,10 +135,14 @@ public class GameScreen extends ScreenAdapter {
         if (Gdx.input.justTouched()) {
             multi = false;
             state = GAME_RUNNING;
+
+            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), false));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             multi = true;
-            player2 = new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
+//            player2 = new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
+            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), false));
+            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), true));
             state = GAME_RUNNING;
         }
     }
@@ -146,17 +161,20 @@ public class GameScreen extends ScreenAdapter {
             return;
         }
 
-        player.update(delta, false);
+        for (Player p: players){
+            p.update(delta);
+        }
 
         for (Enemy e: enemies) {
             e.update(delta);
         }
 
-        if (multi){
-            player2.update(delta, true);
+        for (Player p: players){
+            if (p.health <= 0) {
+                state = GAME_OVER;
+                break;
+            }
         }
-
-        if (player.health <= 0) state = GAME_OVER;
     }
     private void drawPaused(){
         drawRunning();
@@ -169,7 +187,7 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glDisable(GL30.GL_BLEND);
 
         batch.begin();
-        GameUI.settings(batch, getCameraPos());
+        GameUI.settings(batch, camera);
         batch.end();
     }
 
@@ -177,17 +195,26 @@ public class GameScreen extends ScreenAdapter {
         batch.begin();
 
         backgroundSprite.draw(batch);
+        backgroundSprite.draw(batch);
 
         camera.position.set(getCameraPos(),0);
 
+
+
         camera.update();
 
-        player.render(batch, camera);
+        for (Player p: players){
+            p.render(batch, camera);
 
+            if (p.multi){
+                if (playerDistance() > minDist){
+                    zoom = playerDistance()/distFactor*2;
+                    camera.zoom = zoom;
 
-        if (multi){
-            player2.render(batch,camera);
+                }
+            }
         }
+
 
         for (Enemy e: enemies) {
             e.render(batch, camera);
@@ -197,7 +224,9 @@ public class GameScreen extends ScreenAdapter {
         Map.drawMap(map, batch, 1);
         Map.drawMap(hidden,batch, opacity);
 
-        GameUI.drawStats(batch, player, getCameraPos());
+        for (Player p: players){
+            GameUI.drawText(batch, "Health: "+ p.health, getCameraPos().x-Settings.width/4f, getCameraPos().y-Settings.height/5f);
+        }
 
 
 
@@ -207,19 +236,34 @@ public class GameScreen extends ScreenAdapter {
         batch.end();
     }
 
+    private float playerDistance(){
+        return (float) Math.sqrt(Math.pow((players.get(0).midX-players.get(1).midX),2)+Math.pow(players.get(0).midY-players.get(1).midY,2));
+    }
+
     private Vector2 getCameraPos(){
-        if (!multi){
-            return new Vector2(player.midX,player.midY);
+        float x;
+        float y;
+
+        if (players.size() > 1) {
+            x = (players.get(0).midX + players.get(1).midX) / 2;
+            y = (players.get(0).midY + players.get(1).midY) / 2;
+        } else {
+            x = players.get(0).midX;
+            y = players.get(0).midY;
         }
-        float x = (player.midX+player2.midX)/2;
-        float y = (player.midY+player2.midY)/2;
+
         return new Vector2(x,y);
     }
 
     private void drawReady() {
         batch.begin();
 //        backgroundSprite.scale(3);
+
+
         backgroundSprite.draw(batch);
+
+        titleSprite.draw(batch);
+
         batch.end();
     }
 
