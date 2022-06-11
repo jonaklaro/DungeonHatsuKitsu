@@ -132,17 +132,31 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void updateReady () {
+        InputController inputController_p1 = new InputController(
+            Input.Keys.A, 
+            Input.Keys.D, 
+            Input.Keys.SPACE, 
+            Input.Keys.S
+        );
+
+        InputController inputController_p2 = new InputController(
+            Input.Keys.LEFT,
+            Input.Keys.RIGHT,
+            Input.Keys.UP,
+            Input.Keys.DOWN
+        );
+
         if (Gdx.input.justTouched()) {
             multi = false;
             state = GAME_RUNNING;
-
-            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), false));
+            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), false, inputController_p1));
         }
+        
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             multi = true;
 //            player2 = new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
-            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), false));
-            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), true));
+            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), false, inputController_p1));
+            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), true, inputController_p2));
             state = GAME_RUNNING;
         }
     }

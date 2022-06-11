@@ -9,15 +9,16 @@ import com.badlogic.gdx.math.Vector2;
 public class Player extends Entity {
 
     int maxJumps = 1;
-
+    InputController inputController;
 
     boolean hold = false;
     boolean attacked;
 
     Attack attack;
 
+    
 
-    public Player(Vector2 pos, boolean multi) {
+    public Player(Vector2 pos, boolean multi, InputController input) {
         super(pos, "character/char_small.png");
         this.multi = multi;
         kb = KeyBlock.NO_BLOCK;
@@ -29,84 +30,43 @@ public class Player extends Entity {
     }
 
     public void input(){
+        direction.set(0,0);
+        if (!this.inputController.isAttacking()) attacked = false;
 
-        if (!multi){
-            direction.set(0,0);
-            if (!Gdx.input.isKeyPressed(Input.Keys.S)) attacked = false;
+        if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)){
 
-            if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)){
+            if (this.inputController.isAttacking() && !attacked) attack();
 
-                if (Gdx.input.isKeyPressed(Input.Keys.S) && !attacked) {
-                    attacked = true;
-                    attack();
-                }
-
-                if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)){
-                    direction.x = 0;
-                }
-                else if (Gdx.input.isKeyPressed(Input.Keys.A) && (kb != KeyBlock.LEFT)) direction.x = -1;
-                else if (Gdx.input.isKeyPressed(Input.Keys.D) && (kb != KeyBlock.RIGHT)) direction.x = 1;
-                else direction.x = 0;
-
-                if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !hold && (jumpCount < maxJumps)){
-                    hold = true;
-                    jumpCount++;
-                    gravity = 15;
-
-                }
+            if (this.inputController.isMovingLeft() && this.inputController.isMovingRight()){
+                direction.x = 0;
             }
-            if (!Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-                hold = false;
-            }
-            if (kb != KeyBlock.NO_BLOCK){
-                if ((kb == KeyBlock.LEFT && !Gdx.input.isKeyPressed(Input.Keys.A)) || (kb == KeyBlock.RIGHT && !Gdx.input.isKeyPressed(Input.Keys.D))){
-                    kb = KeyBlock.NO_BLOCK;
-                }
+            else if (this.inputController.isMovingLeft() && (kb != KeyBlock.LEFT)) direction.x = -1;
+            else if (this.inputController.isMovingRight() && (kb != KeyBlock.RIGHT)) direction.x = 1;
+            else direction.x = 0;
+
+            if (this.inputController.isJumping() && !hold && (jumpCount < maxJumps)){
+                hold = true;
+                jumpCount++;
+                gravity = 15;
 
             }
-
-            flipPlayer();
         }
-        if (multi){
-            direction.set(0,0);
-            if (!Gdx.input.isKeyPressed(Input.Keys.DOWN)) attacked = false;
-
-            if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)){
-
-                if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && !attacked) {
-                    attacked = true;
-                    attack();
-                }
-
-                if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && Gdx.input.isKeyPressed(Input.Keys.LEFT)) direction.x = 0;
-                else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && (kb != KeyBlock.LEFT)) direction.x = -1;
-                else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && (kb != KeyBlock.RIGHT)) direction.x = 1;
-                else direction.x = 0;
-
-                if (Gdx.input.isKeyPressed(Input.Keys.UP) && !hold && (jumpCount < maxJumps)){
-                    hold = true;
-                    jumpCount++;
-                    gravity = 15;
-
-                }
-            }
-            if (!Gdx.input.isKeyPressed(Input.Keys.UP)){
-                hold = false;
-            }
-            if (kb != KeyBlock.NO_BLOCK){
-                if ((kb == KeyBlock.LEFT && !Gdx.input.isKeyPressed(Input.Keys.LEFT)) || (kb == KeyBlock.RIGHT && !Gdx.input.isKeyPressed(Input.Keys.RIGHT))){
-                    kb = KeyBlock.NO_BLOCK;
-                }
-
+        if (!this.inputController.isJumping()){
+            hold = false;
+        }
+        if (kb != KeyBlock.NO_BLOCK){
+            if ((kb == KeyBlock.LEFT && !this.inputController.isMovingLeft()) || (kb == KeyBlock.RIGHT && !this.inputController.isMovingRight())){
+                kb = KeyBlock.NO_BLOCK;
             }
 
-            flipPlayer();
         }
 
+        flipPlayer();
 
     }
 
     private void attack() {
+        attacked = true;
         if (attacks.size() < 2){
             attacks.add(new Attack(getPosition(),"character\\attack.png", this));
             System.out.println(attacks);
