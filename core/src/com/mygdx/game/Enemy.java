@@ -10,8 +10,7 @@ public class Enemy extends Entity{
         super(pos, "enemy/enemy.png");
         sprite.setScale(1,1);
         sprite.setRegion(0,0,64,64);
-
-//        direction.x = -1;
+        hitRect = new Rectangle(pos.x,pos.y,sprite.getWidth()*playerScale,sprite.getHeight()*playerScale);
 
     }
 

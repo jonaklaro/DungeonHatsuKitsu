@@ -49,7 +49,7 @@ public class GameScreen extends ScreenAdapter {
 
     public static float opacity = 1;
 
-    ArrayList<Enemy> enemies;
+    static ArrayList<Enemy> enemies;
     ArrayList<Player> players;
 
     Texture titleTexture;
@@ -156,6 +156,8 @@ public class GameScreen extends ScreenAdapter {
 
 
     public void updateRunning(float delta){
+
+
         if (Gdx.input.justTouched()) {
             state = GAME_PAUSED;
             return;

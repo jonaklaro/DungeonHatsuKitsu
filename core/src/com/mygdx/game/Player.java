@@ -1,30 +1,20 @@
 package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Player extends Entity {
 
-    enum KeyBlock{
-        NO_BLOCK,
-        RIGHT,
-        LEFT
-    }
-
-    int jumpCount;
-    boolean jumped = false;
-    boolean boostRight = false;
-    boolean boostLeft = false;
     int maxJumps = 1;
-    float color = 1;
+
 
     boolean hold = false;
     boolean attacked;
-    boolean multi;
-    boolean hiding;
 
-    KeyBlock kb;
+    Attack attack;
 
 
     public Player(Vector2 pos, boolean multi) {
@@ -34,6 +24,8 @@ public class Player extends Entity {
         health = 10;
         sprite.setScale( .5f,1);
         sprite.setRegion(10,3,34,61);
+        hitRect = new Rectangle(pos.x,pos.y,34*playerScale,sprite.getHeight()*playerScale);
+
     }
 
     public void input(){
@@ -115,23 +107,24 @@ public class Player extends Entity {
     }
 
     private void attack() {
-        System.out.println("attack");
+        if (attacks.size() < 2){
+            attacks.add(new Attack(getPosition(),"character\\attack.png", this));
+            System.out.println(attacks);
+            System.out.println("attack");
+        }
     }
 
     public void movePlayer(float delta){
-        hitRect.x += direction.x*speed*delta;
+        for (Attack a: attacks){
+            a.move(delta);
+            if (attacks.isEmpty()) break;
+        }
+//        if (attack != null){
+//            attack.move(delta);
+//        }
 
-        collision("hor");
+        move(delta);
 
-        gravity -= gravSpeed*delta;
-        hitRect.y += gravity;
-        collision("ver");
-
-        sprite.setPosition(hitRect.x, hitRect.y);
-        midX = sprite.getX()+(sprite.getWidth()*playerScale/2);
-        midY = sprite.getY()+(sprite.getHeight()*playerScale/2);
-
-//        move(delta);
         drawHurt();
     }
 
@@ -145,7 +138,7 @@ public class Player extends Entity {
 
     }
 
-    private void walljump(boolean multi, boolean boost){
+    public void wallJump(boolean multi, boolean boost){
 
         boolean dir;
         dir = direction.x > 0;
@@ -166,91 +159,21 @@ public class Player extends Entity {
         }
     }
 
-    private void collision(String dir){
-        int throwback = 10;
-        if (dir.equals("hor")){
-            for (Rectangle border: borderRecs){
-                if (hitRect.overlaps(border)){
+    public void render(SpriteBatch batch, OrthographicCamera camera) {
+        batch.setProjectionMatrix(camera.combined);
 
-                    if(direction.x > 0){ //Right
-                        walljump(multi, boostRight);
-
-                        hitRect.x = border.x-hitRect.width;
-                    }
-
-                    if(direction.x < 0){ //Left
-                        walljump(multi, boostLeft);
-
-                        hitRect.x = border.x+(border.width);
-                    }
-                    if (!jumped){
-                        jumped = true;
-                    }
-                }
-            }
-            for (Rectangle enemy: enemyList){
-                if (hitRect.overlaps(enemy)){
-                    if(direction.x > 0){ //Right
-                        kb = KeyBlock.RIGHT;
-                        hitRect.x = enemy.x-hitRect.width-throwback;
-                    }
-
-                    if(direction.x < 0){ //Left
-                        kb = KeyBlock.LEFT;
-                        hitRect.x = enemy.x+(enemy.width)+throwback;
-                    }
-                    health -= 1;
-                    color = 0;
-                }
+        if (attacks != null) {
+            for (Attack a : attacks) {
+                a.render(batch, camera);
             }
         }
-        if (dir.equals("ver")){
-            for (Rectangle border: borderRecs){
-                if (border.overlaps(hitRect)){
-                    if(gravity > 0){ //Up
-                        gravity = 0;
-                        hitRect.y = sprite.getY();
-                    }
-                    else if(gravity <= 0){ //Down
-                        gravity = 0;
-                        hitRect.y = border.y+(border.height);
-                        jumpCount = 0;
-                        jumped = false;
-                        boostRight = true;
-                        boostLeft = true;
-                    }
+//        if (attack != null){
+//            attack.render(batch, camera);
+//        }
 
-                }
-            }
-            for (Rectangle enemy: enemyList){
-                if (hitRect.overlaps(enemy)){
-                    if(gravity > 0){ //Up
-                        gravity = 0;
-                        hitRect.y = sprite.getY()-throwback;
-                    }
-
-                    else if(gravity <= 0){ //Down
-                        gravity = -gravity;
-                        hitRect.y = enemy.y+(enemy.height)+throwback;
-                    }
-                    health -= 1;
-                    color = 0;
-                }
-            }
-        }
-
-        for (Rectangle hidden: hiddenRecs){
-            if (hitRect.overlaps(hidden)){
-                hiding = true;
-                GameScreen.opacity = 0.75f;
-                break;
-            }
-            else if (!multi) {
-                GameScreen.opacity = 1;
-            }
-        }
-
+        sprite.draw(batch);
     }
+
 
     public void update(float delta) {
         input();
