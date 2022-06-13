@@ -68,7 +68,6 @@ public class GameScreen extends ScreenAdapter {
         map = Map.mapp;
         hidden = Map.hidden;
 
-//        player = new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
         players = new ArrayList<>();
         enemies = new ArrayList<>();
         enemies = mapp.getEnemies("assets/maps/newLevel_enemies.csv", enemies);
@@ -154,7 +153,6 @@ public class GameScreen extends ScreenAdapter {
         
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             multi = true;
-//            player2 = new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"));
             players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), false, inputController_p1));
             players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), true, inputController_p2));
             state = GAME_RUNNING;

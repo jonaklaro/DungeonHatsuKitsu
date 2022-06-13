@@ -44,4 +44,6 @@ public class GameUI extends Sprite {
         font.setUseIntegerPositions(false);
         font.draw(batch, text, x, y-font.getCapHeight());
     }
+
+
 }

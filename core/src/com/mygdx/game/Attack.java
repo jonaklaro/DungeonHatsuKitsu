@@ -4,6 +4,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Attack extends Entity{
+
+    boolean colided;
+
     public Attack(Vector2 pos, String spriteLink, Player player) {
 
         super(pos, spriteLink);
@@ -16,7 +19,9 @@ public class Attack extends Entity{
             sprite.setX(pos.x+player.sprite.getWidth()/2);
             direction.x = 1;
         }
-        hitRect = new Rectangle(sprite.getX(),sprite.getY(),sprite.getWidth()*playerScale,sprite.getHeight()*playerScale);
+        sprite.setRegion(0,0,25,25);
+        sprite.setScale(25/64f);
+        hitRect = new Rectangle(sprite.getX(),sprite.getY(),25*playerScale,25*playerScale);
 
         gravity = 0;
         gravSpeed = 0;

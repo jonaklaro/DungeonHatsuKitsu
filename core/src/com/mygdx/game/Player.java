@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.ArrayList;
+
 public class Player extends Entity {
 
     int maxJumps = 1;
@@ -15,12 +17,15 @@ public class Player extends Entity {
     boolean attacked;
 
     Attack attack;
+    ArrayList<Attack> attacks;
 
     
 
     public Player(Vector2 pos, boolean multi, InputController input) {
         super(pos, "character/char_small.png");
         this.multi = multi;
+        this.inputController = input;
+        attacks = new ArrayList<>();
         kb = KeyBlock.NO_BLOCK;
         health = 10;
         sprite.setScale( .5f,1);
@@ -68,7 +73,7 @@ public class Player extends Entity {
     private void attack() {
         attacked = true;
         if (attacks.size() < 2){
-            attacks.add(new Attack(getPosition(),"character\\attack.png", this));
+            attacks.add(new Attack(getPosition(),"character\\ball.png", this));
             System.out.println(attacks);
             System.out.println("attack");
         }
@@ -77,6 +82,10 @@ public class Player extends Entity {
     public void movePlayer(float delta){
         for (Attack a: attacks){
             a.move(delta);
+            if (a.colided){
+                attacks.remove(a);
+                break;
+            }
             if (attacks.isEmpty()) break;
         }
 //        if (attack != null){
@@ -127,9 +136,6 @@ public class Player extends Entity {
                 a.render(batch, camera);
             }
         }
-//        if (attack != null){
-//            attack.render(batch, camera);
-//        }
 
         sprite.draw(batch);
     }

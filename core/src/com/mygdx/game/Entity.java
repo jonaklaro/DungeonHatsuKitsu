@@ -36,7 +36,7 @@ public class Entity extends Sprite {
     Map map;
     static ArrayList<Rectangle> borderRecs;
     static ArrayList<Rectangle> hiddenRecs;
-    static ArrayList<Attack> attacks = new ArrayList<>();
+//    static ArrayList<Attack> attacks = new ArrayList<>();
 //    static ArrayList<Rectangle> enemyList = new ArrayList<>();
     static ArrayList<Enemy> enemyList = new ArrayList<>();
 
@@ -78,7 +78,6 @@ public class Entity extends Sprite {
         map = new Map();
 
         borderRecs = new ArrayList<>();
-        //        borders = map.readMap("assets/maps/newLevel_borders.csv");
         Settings.map = Map.mapp;
         borders = Map.borders;
         hidden = Map.hidden;
@@ -87,7 +86,6 @@ public class Entity extends Sprite {
         borderRecs = createRectList(borders);
         hiddenRecs = createRectList(hidden);
         enemyList = GameScreen.enemies;
-//        enemyList = createRectList(enemies);
 
     }
 
@@ -149,7 +147,6 @@ public class Entity extends Sprite {
                         if (this.getClass() == Player.class){
                             ((Player) this).wallJump(multi, boostRight);
                         }
-
                         hitRect.x = border.x-hitRect.width;
                     }
 
@@ -166,11 +163,9 @@ public class Entity extends Sprite {
                         }
                     }
                     if (this.getClass() == Attack.class){
-                        attacks.remove(this);
+                        ((Attack) this).colided = true;
                         break;
                     }
-                        //                    direction.x = direction.x*(-1);
-
                 }
             }
 
@@ -196,7 +191,8 @@ public class Entity extends Sprite {
                     if (this.getClass() == Attack.class){
                         enemyList.remove(enemy);
                         GameScreen.enemies.remove(enemy);
-                        attacks.remove(this);
+                        ((Attack) this).colided = true;
+//                        attacks.remove(this);
                         break;
                     }
                 }
