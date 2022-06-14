@@ -23,6 +23,9 @@ public class Entity extends Sprite {
 
     private int health;
 
+    private float midX;
+    public float midY;
+
     Entity(Vector2 pos, String spriteLink){
         sprite = createSprite(spriteLink);
         sprite.setPosition(pos.x, pos.y);
@@ -51,10 +54,10 @@ public class Entity extends Sprite {
         return recs;
     }
 
-    public void updateExisting(Character e){
-        if (e.getHealth() <= 0){
-            enemyList.remove(e);
-            GameScreen.enemies.remove(e);
+    public void updateExisting(Character c){
+        if (c.getHealth() <= 0){
+            enemyList.remove(c);
+            GameScreen.enemies.remove(c);
         }
     }
 
@@ -76,7 +79,29 @@ public class Entity extends Sprite {
 
 
 
+
+
     public float getX(){
         return sprite.getX();
+    }
+
+    public float getY() {
+        return sprite.getY();
+    }
+
+    public float getMidX() {
+        return midX;
+    }
+
+    public float getMidY() {
+        return midY;
+    }
+
+    public void setMidX(float midX) {
+        this.midX = midX;
+    }
+
+    public void setMidY(float midY) {
+        this.midY = midY;
     }
 }

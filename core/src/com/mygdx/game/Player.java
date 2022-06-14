@@ -130,4 +130,17 @@ public class Player extends Character {
         movePlayer(delta);
         entityUpdate(delta);
     }
+
+    //Colission detection for the hidden recs
+    public void hiddenColDet(){
+        for (Rectangle hidden: hiddenRecs){
+            if (hitRect.overlaps(hidden) ){
+                GameScreen.opacity = 0.75f;
+                break;
+            }
+            else if (!multi) {
+                GameScreen.opacity = 1;
+            }
+        }
+    }
 }

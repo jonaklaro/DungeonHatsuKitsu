@@ -180,8 +180,10 @@ public class GameScreen extends ScreenAdapter {
         }
 
         for (Enemy e: enemies) {
+            int size = enemies.size();
             e.update(delta);
-            if (enemies.isEmpty()) break;
+
+            if (size != enemies.size()) break;
         }
 
         for (Player p: players){
@@ -252,7 +254,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private float playerDistance(){
-        return (float) Math.sqrt(Math.pow((players.get(0).midX-players.get(1).midX),2)+Math.pow(players.get(0).midY-players.get(1).midY,2));
+        return (float) Math.sqrt(Math.pow((players.get(0).getMidX()-players.get(1).getMidX()),2)+Math.pow(players.get(0).getMidY()-players.get(1).getMidY(),2));
     }
 
     private Vector2 getCameraPos(){
@@ -260,11 +262,11 @@ public class GameScreen extends ScreenAdapter {
         float y;
 
         if (players.size() > 1) {
-            x = (players.get(0).midX + players.get(1).midX) / 2;
-            y = (players.get(0).midY + players.get(1).midY) / 2;
+            x = (players.get(0).getMidX() + players.get(1).getMidX()) / 2;
+            y = (players.get(0).getMidY() + players.get(1).getMidY()) / 2;
         } else {
-            x = players.get(0).midX;
-            y = players.get(0).midY;
+            x = players.get(0).getMidX();
+            y = players.get(0).getMidY();
         }
 
         return new Vector2(x,y);
