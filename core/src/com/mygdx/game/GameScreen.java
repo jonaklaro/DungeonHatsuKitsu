@@ -181,10 +181,11 @@ public class GameScreen extends ScreenAdapter {
 
         for (Enemy e: enemies) {
             e.update(delta);
+            if (enemies.isEmpty()) break;
         }
 
         for (Player p: players){
-            if (p.health <= 0) {
+            if (p.getHealth() <= 0) {
                 state = GAME_OVER;
                 break;
             }
@@ -239,7 +240,7 @@ public class GameScreen extends ScreenAdapter {
         Map.drawMap(hidden,batch, opacity);
 
         for (Player p: players){
-            GameUI.drawText(batch, "Health: "+ p.health, getCameraPos().x-Settings.width/4f, getCameraPos().y-Settings.height/5f);
+            GameUI.drawText(batch, "Health: "+ p.getHealth(), getCameraPos().x-Settings.width/4f, getCameraPos().y-Settings.height/5f);
         }
 
 

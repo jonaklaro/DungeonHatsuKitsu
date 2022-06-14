@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
-public class Player extends Entity {
+public class Player extends Character {
 
     int maxJumps = 1;
     InputController inputController;
@@ -26,8 +26,9 @@ public class Player extends Entity {
         this.multi = multi;
         this.inputController = input;
         attacks = new ArrayList<>();
+        speed = 300;
         kb = KeyBlock.NO_BLOCK;
-        health = 10;
+        setHealth(10);
         sprite.setScale( .5f,1);
         sprite.setRegion(10,3,34,61);
         hitRect = new Rectangle(pos.x,pos.y,34*playerScale,sprite.getHeight()*playerScale);
@@ -66,16 +67,14 @@ public class Player extends Entity {
 
         }
 
-        flipPlayer();
+        flipCharacter();
 
     }
 
     private void attack() {
         attacked = true;
-        if (attacks.size() < 2){
+        if (attacks.size() < 3){
             attacks.add(new Attack(getPosition(),"character\\ball.png", this));
-            System.out.println(attacks);
-            System.out.println("attack");
         }
     }
 
@@ -88,24 +87,9 @@ public class Player extends Entity {
             }
             if (attacks.isEmpty()) break;
         }
-//        if (attack != null){
-//            attack.move(delta);
-//        }
-
-        move(delta);
-
-        drawHurt();
-    }
-
-    private void drawHurt(){
-        if (color >= 1){
-            color = 1;
-        } else {
-            color += health/200f;
-        }
-        sprite.setColor(1,color,color,1);
 
     }
+
 
     public void wallJump(boolean multi, boolean boost){
 
@@ -144,5 +128,6 @@ public class Player extends Entity {
     public void update(float delta) {
         input();
         movePlayer(delta);
+        entityUpdate(delta);
     }
 }
