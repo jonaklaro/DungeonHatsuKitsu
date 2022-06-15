@@ -1,12 +1,18 @@
-package com.mygdx.game;
+package com.mygdx.game.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.GameScreen;
+import com.mygdx.game.InputController;
+import com.mygdx.game.entities.loot.Loot;
 
-public class Player extends Entity {
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class Player extends Character implements Serializable {
 
     int maxJumps = 1;
     InputController inputController;
@@ -14,19 +20,22 @@ public class Player extends Entity {
     boolean hold = false;
     boolean attacked;
 
-    Attack attack;
+    ArrayList<Attack> attacks;
 
     
 
     public Player(Vector2 pos, boolean multi, InputController input) {
         super(pos, "character/char_small.png");
         this.multi = multi;
+        this.inputController = input;
+        attacks = new ArrayList<>();
+        speed = 300;
         kb = KeyBlock.NO_BLOCK;
-        health = 10;
+        setHealth(10);
+        setMaxHealth(10);
         sprite.setScale( .5f,1);
         sprite.setRegion(10,3,34,61);
         hitRect = new Rectangle(pos.x,pos.y,34*playerScale,sprite.getHeight()*playerScale);
-
     }
 
     public void input(){
@@ -61,42 +70,29 @@ public class Player extends Entity {
 
         }
 
-        flipPlayer();
+        flipCharacter();
 
     }
 
     private void attack() {
         attacked = true;
-        if (attacks.size() < 2){
-            attacks.add(new Attack(getPosition(),"character\\attack.png", this));
-            System.out.println(attacks);
-            System.out.println("attack");
+        if (attacks.size() < 3){
+            attacks.add(new Attack(getPosition(),"character\\ball.png", this));
         }
     }
 
     public void movePlayer(float delta){
         for (Attack a: attacks){
             a.move(delta);
+            if (a.collided){
+                attacks.remove(a);
+                break;
+            }
             if (attacks.isEmpty()) break;
         }
-//        if (attack != null){
-//            attack.move(delta);
-//        }
-
-        move(delta);
-
-        drawHurt();
-    }
-
-    private void drawHurt(){
-        if (color >= 1){
-            color = 1;
-        } else {
-            color += health/200f;
-        }
-        sprite.setColor(1,color,color,1);
 
     }
+
 
     public void wallJump(boolean multi, boolean boost){
 
@@ -127,9 +123,6 @@ public class Player extends Entity {
                 a.render(batch, camera);
             }
         }
-//        if (attack != null){
-//            attack.render(batch, camera);
-//        }
 
         sprite.draw(batch);
     }
@@ -138,5 +131,41 @@ public class Player extends Entity {
     public void update(float delta) {
         input();
         movePlayer(delta);
+        entityUpdate(delta, GameScreen.players);
+    }
+
+    //Collision detection for the hidden recs
+    public void hiddenColDet(){
+        for (Rectangle hidden: hiddenRecs){
+            if (hitRect.overlaps(hidden) ){
+                GameScreen.opacity = 0.75f;
+                break;
+            }
+            else if (!multi) {
+                GameScreen.opacity = 1;
+            }
+        }
+    }
+    public void lootColDet(){
+        for (Loot loot: GameScreen.loot){
+            if (hitRect.overlaps(loot.hitRect) ){
+                add(loot);
+                GameScreen.loot.remove(loot);
+                break;
+//                System.out.println("col");
+            }
+        }
+    }
+
+    void add(Loot loot){
+        recieveCredits(loot.credits);
+        recieveHealth(loot.health);
+    }
+
+    void resetPlayerParameters(){
+        jumpCount = 0;
+        jumped = false;
+        boostRight = true;
+        boostLeft = true;
     }
 }

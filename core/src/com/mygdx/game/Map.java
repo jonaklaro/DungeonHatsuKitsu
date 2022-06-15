@@ -4,6 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.entities.Enemy;
+import com.mygdx.game.entities.Pegpeg;
+import com.mygdx.game.entities.RoundStinger;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -18,10 +21,10 @@ public class Map extends Sprite {
     public float playerY;
     Texture tileMap;
     static Sprite spriteMap;
-    static int[][] mapp;
-    static int[][] borders;
-    static int[][] hidden;
-    static int[][] enemies;
+    public static int[][] mapp;
+    public static int[][] borders;
+    public static int[][] hidden;
+    public static int[][] enemies;
     static int tilesize = Settings.tilesize;
     static int graphicScale = Settings.graphicScale;
 
@@ -34,11 +37,11 @@ public class Map extends Sprite {
     }
 
     public static void load(){
-        enemies = readMap("assets/maps/newLevel_enemies.csv");
+        enemies = readMap("assets/maps/level1_enemies.csv");
 
-        borders = readMap("assets/maps/newLevel_borders.csv");
-        hidden = readMap("assets/maps/newLevel_hidden_obj.csv");
-        mapp = readMap("assets/maps/newLevel_map.csv");
+        borders = readMap("assets/maps/level1_borders.csv");
+        hidden = readMap("assets/maps/level1_hidden_obj.csv");
+        mapp = readMap("assets/maps/level1_map.csv");
     }
 
     public static int[][] readMap(String path){
@@ -95,11 +98,14 @@ public class Map extends Sprite {
                 String[] tokens = line.split(",");
 
                 for (int col = 0; col < mapp[row].length; col++) {
-                    if (!tokens[col].equals("-1")) {
-                        playerX = col * Settings.tilesize * Settings.graphicScale;
-                        playerY = -row * Settings.tilesize * Settings.graphicScale;
-                        pos = new Vector2( playerX,playerY);
-                        enemyArrayList.add(new Enemy(pos));
+                    playerX = col * Settings.tilesize * Settings.graphicScale;
+                    playerY = -row * Settings.tilesize * Settings.graphicScale;
+                    pos = new Vector2( playerX,playerY);
+                    if (tokens[col].equals("0")) {
+                        enemyArrayList.add(new RoundStinger(pos));
+                    }
+                    if (tokens[col].equals("1")) {
+                        enemyArrayList.add(new Pegpeg(pos));
                     }
                 }
             }

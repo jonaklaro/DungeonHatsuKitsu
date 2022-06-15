@@ -35,7 +35,6 @@ public class GameUI extends Sprite {
 
         setSprite.setScale(zoom*8);
         setSprite.setOrigin(0,0);
-        System.out.println(cam.position+", "+zoom);
         setSprite.setPosition(cam.position.x-setSprite.getWidth()*zoom*4, cam.position.y-setSprite.getHeight()*zoom*4);
         setSprite.draw(batch);
     }
@@ -44,4 +43,6 @@ public class GameUI extends Sprite {
         font.setUseIntegerPositions(false);
         font.draw(batch, text, x, y-font.getCapHeight());
     }
+
+
 }
