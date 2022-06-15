@@ -1,13 +1,17 @@
-package com.mygdx.game;
+package com.mygdx.game.entities;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.GameScreen;
+import com.mygdx.game.Map;
+import com.mygdx.game.Settings;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Character extends Entity {
+public class Character extends Entity implements Serializable {
     boolean flipped;
     boolean multi;
 
@@ -43,6 +47,7 @@ public class Character extends Entity {
     KeyBlock kb;
 
 
+    // constructor for characters
     public Character(Vector2 pos, String spriteLink){
         super(pos, spriteLink);
 
@@ -58,8 +63,6 @@ public class Character extends Entity {
 
         borderRecs = createRectList(borders);
         hiddenRecs = createRectList(hidden);
-        enemyList = GameScreen.enemies;
-
     }
 
     void flipCharacter() {
@@ -73,14 +76,14 @@ public class Character extends Entity {
         }
     }
 
-    // gereral update method for characters
-    public void entityUpdate(float delta){
+    // general update method for characters
+    public void entityUpdate(float delta, ArrayList characters){
         move(delta);
         drawHurt();
-        updateExisting(this);
+        updateExisting(this, characters);
     }
 
-    //a method to move the different axes of the hitbox and do colDet
+    //a method to move the different axes of the hit box and do colDet
     void move(float delta){
         hitRect.x += direction.x*speed*delta;
 
@@ -106,19 +109,19 @@ public class Character extends Entity {
         sprite.setColor(1,color,color,1);
     }
 
-    // A method to detect horizontal and vertical colissions
+    // A method to detect horizontal and vertical collisions
     private void collision(String dir){
         //horizontal detection
         if (dir.equals("hor")){
-            //for every border, check if its overlapping with own hitbox
+            //for every border, check if it's overlapping with own hit box
             for (Rectangle border: borderRecs){
                 if (hitRect.overlaps(border)){
                     if(direction.x > 0){ //character is moving Right
-                        // if character is player, see if they are doing a woll jump
+                        // if character is player, see if they are doing a wall jump
                         if (this.getClass() == Player.class){
                             ((Player) this).wallJump(multi, boostRight);
                         }
-                        //set x coordinate of hitbox to x coordinate of the border - hitbox width
+                        //set x coordinate of hit box to x coordinate of the border - hitbox width
                         hitRect.x = border.x-hitRect.width;
                     }
 
@@ -138,7 +141,7 @@ public class Character extends Entity {
             }
 
             // enemy detection
-            for (Enemy enemy: enemyList){
+            for (Enemy enemy: GameScreen.enemies){
                 if (hitRect.overlaps(enemy.hitRect)){
                     // same as border colDec, sets a Keyblock, when Player walks against enemy -> hitbox gets resetet with extra throwback
                     if(direction.x > 0){ //Right
@@ -153,14 +156,14 @@ public class Character extends Entity {
 
                     //if Player collides with enemy, let them recieve Damage, set red color for damage animation
                     if (this.getClass() == Player.class){
-                        this.recieveDamage(enemy.getDamage());
+                        this.receiveDamage(enemy.getDamage());
                         color = 0;
                     }
 
                     //same as Player, but enemy recieves the damage
                     if (this.getClass() == Attack.class){
                         enemy.color = 0;
-                        enemy.recieveDamage(this.getDamage());
+                        enemy.receiveDamage(this.getDamage());
 
                         // set Attack.collided to true
                         ((Attack) this).colided = true;
@@ -198,7 +201,7 @@ public class Character extends Entity {
 
             //if Player is colliding with enemy
             if (this.getClass() == Player.class){
-                for (Enemy enemy: enemyList){
+                for (Enemy enemy: GameScreen.enemies){
                     if (hitRect.overlaps(enemy.hitRect)){
                         // same as earlyer with player and enemy colission
                         if(gravity > 0){ //Up
@@ -214,7 +217,7 @@ public class Character extends Entity {
                         }
 
                         //subtract enemyDamage from Player health and set color to red for hurt animation
-                        recieveDamage(enemy.getDamage());
+                        receiveDamage(enemy.getDamage());
                         color = 0;
                     }
                 }

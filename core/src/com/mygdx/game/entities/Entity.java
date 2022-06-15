@@ -1,20 +1,21 @@
-package com.mygdx.game;
+package com.mygdx.game.entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Settings;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Entity extends Sprite {
+public class Entity extends Sprite implements Serializable {
     Texture texture;
     Sprite sprite;
     Rectangle hitRect;
 
     static ArrayList<Rectangle> borderRecs;
     static ArrayList<Rectangle> hiddenRecs;
-    static ArrayList<Enemy> enemyList = new ArrayList<>();
 
     Rectangle rec;
 
@@ -26,19 +27,21 @@ public class Entity extends Sprite {
     private float midX;
     public float midY;
 
+    //basic Constructor for every entity
     Entity(Vector2 pos, String spriteLink){
         sprite = createSprite(spriteLink);
         sprite.setPosition(pos.x, pos.y);
     }
 
+    //basic Sprite create function
     Sprite createSprite(String link){
         texture = new Texture(link);
         sprite = new Sprite(texture);
         sprite.setOrigin(0,0);
-
         return sprite;
     }
 
+    //Add rectangles to list (for borders)
     ArrayList<Rectangle> createRectList(int[][] map){
         ArrayList<Rectangle> recs = new ArrayList<>();
         for (int row = 0; row < map.length; row++) {
@@ -54,10 +57,14 @@ public class Entity extends Sprite {
         return recs;
     }
 
-    public void updateExisting(Character c){
+    //remove character from its list when its dead
+    public void updateExisting(Character c, ArrayList characters){
         if (c.getHealth() <= 0){
-            enemyList.remove(c);
-            GameScreen.enemies.remove(c);
+
+            if (c.getClass().getSuperclass() == Enemy.class) {
+                ((Enemy) c).dropLoot();
+            }
+            characters.remove(c);
         }
     }
 
@@ -69,7 +76,8 @@ public class Entity extends Sprite {
         this.health = health;
     }
 
-    public void recieveDamage(int damage) {
+    // entity health gets subtracted by damage
+    public void receiveDamage(int damage) {
         this.health -= damage;
     }
 
@@ -77,9 +85,10 @@ public class Entity extends Sprite {
         return new Vector2(sprite.getX(), sprite.getY());
     }
 
-
-
-
+    public void setPosition(Vector2 position) {
+        hitRect.setX(position.x);
+        hitRect.setY(position.y);
+    }
 
     public float getX(){
         return sprite.getX();

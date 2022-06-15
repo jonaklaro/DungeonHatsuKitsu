@@ -12,10 +12,13 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.entities.Enemy;
+import com.mygdx.game.entities.Player;
 
+import java.io.*;
 import java.util.ArrayList;
 
-public class GameScreen extends ScreenAdapter {
+public class GameScreen extends ScreenAdapter implements Serializable {
 
     // Imports
     SpriteBatch batch;
@@ -49,11 +52,13 @@ public class GameScreen extends ScreenAdapter {
 
     public static float opacity = 1;
 
-    static ArrayList<Enemy> enemies;
-    ArrayList<Player> players;
+    public static ArrayList<Enemy> enemies;
+    public static ArrayList<Player> players;
 
     Texture titleTexture;
     Sprite titleSprite;
+
+    GameData gameData;
 
     public GameScreen(Game game) {
         this.game = game;
@@ -70,9 +75,9 @@ public class GameScreen extends ScreenAdapter {
 
         players = new ArrayList<>();
         enemies = new ArrayList<>();
-        enemies = mapp.getEnemies("assets/maps/newLevel_enemies.csv", enemies);
+        enemies = mapp.getEnemies("assets/maps/level1_enemies.csv", enemies);
 
-        camera.position.set(mapp.getPlayer("assets/maps/newLevel_entities.csv"),0);
+        camera.position.set(mapp.getPlayer("assets/maps/level1_entities.csv"),0);
         minDist = 500;
         distFactor = 2000;
         zoom = (float) minDist/distFactor*2;
@@ -89,6 +94,8 @@ public class GameScreen extends ScreenAdapter {
         titleSprite = new Sprite(titleTexture);
         titleSprite.scale(8);
         titleSprite.setPosition(camera.position.x+titleSprite.getWidth()/2,-camera.position.y/2-titleSprite.getHeight()/2);
+
+        gameData = new GameData();
     }
 
     @Override
@@ -148,13 +155,13 @@ public class GameScreen extends ScreenAdapter {
         if (Gdx.input.justTouched()) {
             multi = false;
             state = GAME_RUNNING;
-            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), false, inputController_p1));
+            players.add(new Player(mapp.getPlayer("assets/maps/level1_entities.csv"), false, inputController_p1));
         }
         
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             multi = true;
-            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), false, inputController_p1));
-            players.add(new Player(mapp.getPlayer("assets/maps/newLevel_entities.csv"), true, inputController_p2));
+            players.add(new Player(mapp.getPlayer("assets/maps/level1_entities.csv"), false, inputController_p1));
+            players.add(new Player(mapp.getPlayer("assets/maps/level1_entities.csv"), true, inputController_p2));
             state = GAME_RUNNING;
         }
     }
@@ -168,15 +175,22 @@ public class GameScreen extends ScreenAdapter {
 
 
     public void updateRunning(float delta){
-
-
         if (Gdx.input.justTouched()) {
             state = GAME_PAUSED;
             return;
         }
 
+        if (Gdx.input.isKeyPressed(Input.Keys.F)) {
+            saveGameState();
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.G)) {
+            loadGameState();
+        }
+
         for (Player p: players){
+            int size = players.size();
             p.update(delta);
+            if (size != players.size()) break;
         }
 
         for (Enemy e: enemies) {
@@ -186,13 +200,10 @@ public class GameScreen extends ScreenAdapter {
             if (size != enemies.size()) break;
         }
 
-        for (Player p: players){
-            if (p.getHealth() <= 0) {
-                state = GAME_OVER;
-                break;
-            }
-        }
+        if (players.isEmpty()) state = GAME_OVER;
+
     }
+
     private void drawPaused(){
         drawRunning();
         Gdx.gl.glEnable(GL30.GL_BLEND);
@@ -216,14 +227,12 @@ public class GameScreen extends ScreenAdapter {
 
         camera.position.set(getCameraPos(),0);
 
-
-
         camera.update();
 
         for (Player p: players){
             p.render(batch, camera);
 
-            if (p.multi){
+            if (players.size() > 1) {
                 if (playerDistance() > minDist){
                     zoom = playerDistance()/distFactor*2;
                     camera.zoom = zoom;
@@ -245,10 +254,7 @@ public class GameScreen extends ScreenAdapter {
             GameUI.drawText(batch, "Health: "+ p.getHealth(), getCameraPos().x-Settings.width/4f, getCameraPos().y-Settings.height/5f);
         }
 
-
-
         backgroundSprite.setPosition((float) (getCameraPos().x/1.5)-2*tilesize*graphicScale,(getCameraPos().y/2)-5*tilesize*graphicScale);
-
 
         batch.end();
     }
@@ -274,18 +280,12 @@ public class GameScreen extends ScreenAdapter {
 
     private void drawReady() {
         batch.begin();
-//        backgroundSprite.scale(3);
-
 
         backgroundSprite.draw(batch);
-
         titleSprite.draw(batch);
 
         batch.end();
     }
-
-
-
 
     @Override
     public void resize(int width, int height) {
@@ -302,5 +302,30 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void hide() {
         super.hide();
+    }
+
+    public void saveGameState(){
+        try {
+
+            gameData.loadInfo(players);
+            gameData.saveGameState();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadGameState(){
+
+        try {
+            FileInputStream fis = new FileInputStream("game.save");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            gameData = (GameData) ois.readObject();
+            ois.close();
+            fis.close();
+            gameData.writeInfo(players);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

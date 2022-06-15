@@ -1,11 +1,13 @@
-package com.mygdx.game;
+package com.mygdx.game.entities;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class Attack extends Character {
+import java.io.Serializable;
 
-    boolean colided;
+public class Attack extends Character implements Serializable {
+
+    public boolean colided;
 
     public Attack(Vector2 pos, String spriteLink, Player player) {
 
@@ -23,7 +25,6 @@ public class Attack extends Character {
         sprite.setScale(25/64f);
         hitRect = new Rectangle(sprite.getX(),sprite.getY(),25*playerScale,25*playerScale);
 
-        gravity = 0;
         gravSpeed = 0;
         damage = 1;
         speed = 500;

@@ -1,14 +1,17 @@
-package com.mygdx.game;
+package com.mygdx.game.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.GameScreen;
+import com.mygdx.game.InputController;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Player extends Character {
+public class Player extends Character implements Serializable {
 
     int maxJumps = 1;
     InputController inputController;
@@ -16,7 +19,6 @@ public class Player extends Character {
     boolean hold = false;
     boolean attacked;
 
-    Attack attack;
     ArrayList<Attack> attacks;
 
     
@@ -128,7 +130,7 @@ public class Player extends Character {
     public void update(float delta) {
         input();
         movePlayer(delta);
-        entityUpdate(delta);
+        entityUpdate(delta, GameScreen.players);
     }
 
     //Colission detection for the hidden recs
