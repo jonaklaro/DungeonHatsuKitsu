@@ -8,12 +8,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.math.Vector2;
+// import com.badlogic.gdx.math.Vector2;
 
 public class GameUI extends Sprite {
     private static Texture settings = new Texture("settingsBoard.png");
     private static Sprite setSprite = new Sprite(settings);
-    private static int graphicScale = Settings.graphicScale;
+    // private static int graphicScale = Settings.graphicScale;
 
     private static FreeTypeFontGenerator fontGenerator;
     private static FreeTypeFontGenerator.FreeTypeFontParameter fontParameter;
