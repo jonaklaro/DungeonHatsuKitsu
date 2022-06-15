@@ -2,6 +2,8 @@ package com.mygdx.game.entities;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.GameScreen;
+import com.mygdx.game.entities.loot.LootHealth;
 
 import java.io.Serializable;
 
@@ -16,5 +18,11 @@ public class Pegpeg extends Enemy implements Serializable {
         setHealth(7);
         damage = 2;
         speed = 300;
+    }
+
+    @Override
+    public void dropLoot() {
+        super.dropLoot();
+        GameScreen.loot.add(new LootHealth(new Vector2(getMidX(),getMidY())));
     }
 }

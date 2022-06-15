@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.entities.Enemy;
 import com.mygdx.game.entities.Player;
+import com.mygdx.game.entities.loot.Loot;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
     public static ArrayList<Enemy> enemies;
     public static ArrayList<Player> players;
+    public static ArrayList<Loot> loot;
 
     Texture titleTexture;
     Sprite titleSprite;
@@ -73,6 +75,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
         map = Map.mapp;
         hidden = Map.hidden;
 
+        loot = new ArrayList<>();
         players = new ArrayList<>();
         enemies = new ArrayList<>();
         enemies = mapp.getEnemies("assets/maps/level1_enemies.csv", enemies);
@@ -200,6 +203,10 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             if (size != enemies.size()) break;
         }
 
+        for (Loot l: loot){
+            l.update(delta);
+        }
+
         if (players.isEmpty()) state = GAME_OVER;
 
     }
@@ -236,14 +243,16 @@ public class GameScreen extends ScreenAdapter implements Serializable {
                 if (playerDistance() > minDist){
                     zoom = playerDistance()/distFactor*2;
                     camera.zoom = zoom;
-
                 }
             }
         }
 
-
         for (Enemy e: enemies) {
             e.render(batch, camera);
+        }
+
+        for (Loot l: loot){
+            l.render(batch, camera);
         }
 
 

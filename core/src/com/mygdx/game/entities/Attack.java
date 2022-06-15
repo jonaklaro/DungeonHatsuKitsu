@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public class Attack extends Character implements Serializable {
 
-    public boolean colided;
+    public boolean collided;
 
     public Attack(Vector2 pos, String spriteLink, Player player) {
 

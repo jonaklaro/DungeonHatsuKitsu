@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.InputController;
+import com.mygdx.game.entities.loot.Loot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,10 +32,10 @@ public class Player extends Character implements Serializable {
         speed = 300;
         kb = KeyBlock.NO_BLOCK;
         setHealth(10);
+        setMaxHealth(10);
         sprite.setScale( .5f,1);
         sprite.setRegion(10,3,34,61);
         hitRect = new Rectangle(pos.x,pos.y,34*playerScale,sprite.getHeight()*playerScale);
-
     }
 
     public void input(){
@@ -83,7 +84,7 @@ public class Player extends Character implements Serializable {
     public void movePlayer(float delta){
         for (Attack a: attacks){
             a.move(delta);
-            if (a.colided){
+            if (a.collided){
                 attacks.remove(a);
                 break;
             }
@@ -133,7 +134,7 @@ public class Player extends Character implements Serializable {
         entityUpdate(delta, GameScreen.players);
     }
 
-    //Colission detection for the hidden recs
+    //Collision detection for the hidden recs
     public void hiddenColDet(){
         for (Rectangle hidden: hiddenRecs){
             if (hitRect.overlaps(hidden) ){
@@ -144,5 +145,27 @@ public class Player extends Character implements Serializable {
                 GameScreen.opacity = 1;
             }
         }
+    }
+    public void lootColDet(){
+        for (Loot loot: GameScreen.loot){
+            if (hitRect.overlaps(loot.hitRect) ){
+                add(loot);
+                GameScreen.loot.remove(loot);
+                break;
+//                System.out.println("col");
+            }
+        }
+    }
+
+    void add(Loot loot){
+        recieveCredits(loot.credits);
+        recieveHealth(loot.health);
+    }
+
+    void resetPlayerParameters(){
+        jumpCount = 0;
+        jumped = false;
+        boostRight = true;
+        boostLeft = true;
     }
 }

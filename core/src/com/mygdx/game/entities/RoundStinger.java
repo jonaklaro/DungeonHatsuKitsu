@@ -2,6 +2,8 @@ package com.mygdx.game.entities;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.GameScreen;
+import com.mygdx.game.entities.loot.LootCredits;
 
 import java.io.Serializable;
 
@@ -17,5 +19,11 @@ public class RoundStinger extends Enemy implements Serializable {
         setHealth(5);
         damage = 2;
         speed = 200;
+    }
+
+    @Override
+    public void dropLoot() {
+        super.dropLoot();
+        GameScreen.loot.add(new LootCredits(new Vector2(getMidX(),getMidY())));
     }
 }
