@@ -22,8 +22,6 @@ public class Player extends Character implements Serializable {
 
     ArrayList<Attack> attacks;
 
-    
-
     public Player(Vector2 pos, boolean multi, InputController input) {
         super(pos, "character/char_small.png");
         this.multi = multi;
@@ -32,12 +30,13 @@ public class Player extends Character implements Serializable {
         speed = 300;
         kb = KeyBlock.NO_BLOCK;
         setHealth(10);
-        setMaxHealth(10);
+        maxHealth = 10;
         sprite.setScale( .5f,1);
         sprite.setRegion(10,3,34,61);
         hitRect = new Rectangle(pos.x,pos.y,34*playerScale,sprite.getHeight()*playerScale);
     }
 
+    //a function to handle the player's input
     public void input(){
         direction.set(0,0);
         if (!this.inputController.isAttacking()) attacked = false;
@@ -74,6 +73,7 @@ public class Player extends Character implements Serializable {
 
     }
 
+    //a function to create the attack
     private void attack() {
         attacked = true;
         if (attacks.size() < 3){
@@ -81,7 +81,8 @@ public class Player extends Character implements Serializable {
         }
     }
 
-    public void movePlayer(float delta){
+    //a function to move the attacks
+    public void moveAttack(float delta){
         for (Attack a: attacks){
             a.move(delta);
             if (a.collided){
@@ -93,28 +94,20 @@ public class Player extends Character implements Serializable {
 
     }
 
-
+    //a function to let the player do wall jumps
     public void wallJump(boolean multi, boolean boost){
 
         boolean dir;
         dir = direction.x > 0;
 
-        if (!multi){
-            if ((Gdx.input.isKeyPressed(Input.Keys.SPACE)) && boost){
-                jumpCount--;
-                boostRight = !dir;
-                boostLeft = dir;
-            }
-        }
-        if (multi){
-            if ((Gdx.input.isKeyPressed(Input.Keys.UP)) && boost){
-                jumpCount--;
-                boostRight = !dir;
-                boostLeft = dir;
-            }
+        if (inputController.isJumping() && boost){
+            jumpCount--;
+            boostRight = !dir;
+            boostLeft = dir;
         }
     }
 
+    //a render function that draws the player and the attacks
     public void render(SpriteBatch batch, OrthographicCamera camera) {
         batch.setProjectionMatrix(camera.combined);
 
@@ -123,14 +116,13 @@ public class Player extends Character implements Serializable {
                 a.render(batch, camera);
             }
         }
-
         sprite.draw(batch);
     }
 
-
+    //a function to update the player
     public void update(float delta) {
         input();
-        movePlayer(delta);
+        moveAttack(delta);
         entityUpdate(delta, GameScreen.players);
     }
 
@@ -146,22 +138,29 @@ public class Player extends Character implements Serializable {
             }
         }
     }
+
+    //Collision detection for the loot
     public void lootColDet(){
         for (Loot loot: GameScreen.loot){
             if (hitRect.overlaps(loot.hitRect) ){
                 add(loot);
                 GameScreen.loot.remove(loot);
                 break;
-//                System.out.println("col");
             }
         }
     }
 
-    void add(Loot loot){
-        recieveCredits(loot.credits);
-        recieveHealth(loot.health);
+    //a function to add loot to the player
+    public void add(Loot loot){
+        if (loot.credits > 0){
+            credits += loot.credits;
+        }
+        if (loot.health > 0 && health < maxHealth){
+            health += loot.health;
+        }
     }
 
+    //a function to reset the player parameters
     void resetPlayerParameters(){
         jumpCount = 0;
         jumped = false;

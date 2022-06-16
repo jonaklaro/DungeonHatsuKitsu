@@ -25,9 +25,9 @@ public class Entity extends Sprite implements Serializable {
     int tilesize = Settings.tilesize;
     int graphicScale = Settings.graphicScale;
 
-    private int health;
-    private int maxHealth;
-    private int credits;
+    int health;
+    int maxHealth;
+    int credits;
 
     private float midX;
     public float midY;
@@ -107,15 +107,6 @@ public class Entity extends Sprite implements Serializable {
     public void receiveDamage(int damage) {
         this.health -= damage;
     }
-    public void recieveHealth(int health){
-        this.health += health;
-        if (this.health > getMaxHealth()){
-            this.health = getMaxHealth();
-        }
-    }
-    public void recieveCredits(int credits){
-        this.credits += credits;
-    }
 
     // A method to detect horizontal and vertical collisions
     public void collision(String dir){
@@ -149,33 +140,35 @@ public class Entity extends Sprite implements Serializable {
             }
 
             // enemy detection
-            for (Enemy enemy: GameScreen.enemies){
-                if (hitRect.overlaps(enemy.hitRect)){
-                    // same as border colDec, sets a Key block, when Player walks against enemy -> hit box gets reset with extra throwback
-                    if(direction.x > 0){ //Right
-                        this.kb = Character.KeyBlock.RIGHT;
-                        hitRect.x = enemy.hitRect.x-hitRect.width-throwback;
-                    }
+            if (this.getClass().getSuperclass() != Enemy.class){
+                for (Enemy enemy: GameScreen.enemies){
+                    if (hitRect.overlaps(enemy.hitRect)){
+                        // same as border colDec, sets a Key block, when Player walks against enemy -> hit box gets reset with extra throwback
+                        if(direction.x > 0){ //Right
+                            this.kb = Character.KeyBlock.RIGHT;
+                            hitRect.x = enemy.hitRect.x-hitRect.width-throwback;
+                        }
 
-                    if(direction.x < 0){ //Left
-                        kb = Character.KeyBlock.LEFT;
-                        hitRect.x = enemy.hitRect.x+(enemy.hitRect.width)+throwback;
-                    }
+                        if(direction.x < 0){ //Left
+                            kb = Character.KeyBlock.LEFT;
+                            hitRect.x = enemy.hitRect.x+(enemy.hitRect.width)+throwback;
+                        }
 
-                    //if Player collides with enemy, let them receive Damage, set red color for damage animation
-                    if (this.getClass() == Player.class){
-                        this.receiveDamage(enemy.getDamage());
-                        ((Player) this).color = 0;
-                    }
+                        //if Player collides with enemy, let them receive Damage, set red color for damage animation
+                        if (this.getClass() == Player.class){
+                            this.receiveDamage(enemy.getDamage());
+                            ((Player) this).color = 0;
+                        }
 
-                    //same as Player, but enemy receives the damage
-                    if (this.getClass() == Attack.class){
-                        enemy.color = 0;
-                        enemy.receiveDamage(this.getDamage());
+                        //same as Player, but enemy receives the damage
+                        if (this.getClass() == Attack.class){
+                            enemy.color = 0;
+                            enemy.receiveDamage(this.getDamage());
 
-                        // set Attack.collided to true
-                        ((Attack) this).collided = true;
-                        break;
+                            // set Attack.collided to true
+                            ((Attack) this).collided = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -287,15 +280,15 @@ public class Entity extends Sprite implements Serializable {
         return maxHealth;
     }
 
-    public void setMaxHealth(int maxHealth) {
-        this.maxHealth = maxHealth;
-    }
-
     public int getCredits() {
         return credits;
     }
 
     public int getDamage(){
         return damage;
+    }
+
+    public Vector2 getMidPosition(){
+        return new Vector2(getMidX(),getMidY());
     }
 }

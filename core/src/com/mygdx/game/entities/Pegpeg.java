@@ -17,7 +17,9 @@ public class Pegpeg extends Enemy implements Serializable {
         hitRect = new Rectangle(pos.x,pos.y,width*playerScale,height*playerScale);
         setHealth(7);
         damage = 2;
-        speed = 300;
+        speed = 0;
+        sprite.flip(true,false);
+        range = 600;
     }
 
     @Override

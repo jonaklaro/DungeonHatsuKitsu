@@ -18,12 +18,13 @@ public class RoundStinger extends Enemy implements Serializable {
         hitRect = new Rectangle(pos.x,pos.y,width*playerScale,height*playerScale);
         setHealth(5);
         damage = 2;
-        speed = 200;
+        speed = 100;
+        range = 400;
     }
 
+    //a function to drop loot
     @Override
     public void dropLoot() {
-        super.dropLoot();
         GameScreen.loot.add(new LootCredits(new Vector2(getMidX(),getMidY())));
     }
 }

@@ -176,7 +176,6 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
     }
 
-
     public void updateRunning(float delta){
         if (Gdx.input.justTouched()) {
             state = GAME_PAUSED;
@@ -240,8 +239,9 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             p.render(batch, camera);
 
             if (players.size() > 1) {
-                if (playerDistance() > minDist){
-                    zoom = playerDistance()/distFactor*2;
+                float dist = getDistance((players.get(0).getMidPosition()),players.get(1).getMidPosition());
+                if (dist > minDist){
+                    zoom = dist/distFactor*2;
                     camera.zoom = zoom;
                 }
             }
@@ -268,8 +268,8 @@ public class GameScreen extends ScreenAdapter implements Serializable {
         batch.end();
     }
 
-    private float playerDistance(){
-        return (float) Math.sqrt(Math.pow((players.get(0).getMidX()-players.get(1).getMidX()),2)+Math.pow(players.get(0).getMidY()-players.get(1).getMidY(),2));
+    public static float getDistance(Vector2 pos1, Vector2 pos2){
+        return (float) Math.sqrt(Math.pow((pos1.x-pos2.x),2)+Math.pow(pos1.y-pos2.y,2));
     }
 
     private Vector2 getCameraPos(){

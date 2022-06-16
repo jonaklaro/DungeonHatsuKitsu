@@ -32,7 +32,7 @@ public class Character extends Entity implements Serializable {
     public Character(Vector2 pos, String spriteLink){
         super(pos, spriteLink);
 
-        gravity = 0;
+        direction.y = 0;
 
         map = new Map();
 
@@ -66,7 +66,8 @@ public class Character extends Entity implements Serializable {
 
     //a method to move the different axes of the hit box and do colDet
     void move(float delta){
-        hitRect.x += direction.x*speed*delta;
+        float offset = direction.x*speed*delta;
+        hitRect.x += offset;
 
         collision("hor");
 
