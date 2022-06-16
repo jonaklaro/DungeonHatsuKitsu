@@ -8,6 +8,9 @@ import com.mygdx.game.entities.Enemy;
 import com.mygdx.game.entities.Pegpeg;
 import com.mygdx.game.entities.RoundStinger;
 
+// import GameScreen;
+import com.mygdx.game.GameScreen;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -28,7 +31,10 @@ public class Map extends Sprite {
     static int tilesize = Settings.tilesize;
     static int graphicScale = Settings.graphicScale;
 
-    public Map(){
+    // gamescreen
+    public static GameScreen gameScreen;
+
+    public Map() {
         tileMap = new Texture("forrest.png");
         spriteMap = new Sprite(tileMap);
         numCol = Settings.numCol;
@@ -36,7 +42,8 @@ public class Map extends Sprite {
 
     }
 
-    public static void load(){
+    public static void load() {
+        gameScreen = GameScreen.instance;
         enemies = readMap("assets/maps/level1_enemies.csv");
 
         borders = readMap("assets/maps/level1_borders.csv");
@@ -44,7 +51,7 @@ public class Map extends Sprite {
         mapp = readMap("assets/maps/level1_map.csv");
     }
 
-    public static int[][] readMap(String path){
+    public static int[][] readMap(String path) {
         mapp = new int[40][60];
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
@@ -52,16 +59,17 @@ public class Map extends Sprite {
                 String line = br.readLine();
                 String[] tokens = line.split(",");
 
-                for (int col = 0; col < mapp[row].length; col++){
-                        mapp[row][col] = Integer.parseInt(tokens[col]);
+                for (int col = 0; col < mapp[row].length; col++) {
+                    mapp[row][col] = Integer.parseInt(tokens[col]);
                 }
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return mapp;
     }
+
     public Vector2 getPlayer(String path) {
         mapp = new int[100][100];
 
@@ -76,7 +84,7 @@ public class Map extends Sprite {
                     if (tokens[col].equals("0")) {
                         playerX = col * Settings.tilesize * Settings.graphicScale;
                         playerY = -row * Settings.tilesize * Settings.graphicScale;
-                        pos = new Vector2( playerX,playerY);
+                        pos = new Vector2(playerX, playerY);
                     }
                 }
             }
@@ -87,7 +95,7 @@ public class Map extends Sprite {
         return pos;
     }
 
-    public ArrayList<Enemy> getEnemies(String path, ArrayList<Enemy> enemyArrayList) {
+    public ArrayList<Enemy> getEnemies(String path, ArrayList<Enemy> enemies) {
         mapp = new int[100][100];
 
         Vector2 pos;
@@ -100,12 +108,12 @@ public class Map extends Sprite {
                 for (int col = 0; col < mapp[row].length; col++) {
                     playerX = col * Settings.tilesize * Settings.graphicScale;
                     playerY = -row * Settings.tilesize * Settings.graphicScale;
-                    pos = new Vector2( playerX,playerY);
+                    pos = new Vector2(playerX, playerY);
                     if (tokens[col].equals("0")) {
-                        enemyArrayList.add(new RoundStinger(pos));
+                        enemies.add(new RoundStinger(pos));
                     }
                     if (tokens[col].equals("1")) {
-                        enemyArrayList.add(new Pegpeg(pos));
+                        enemies.add(new Pegpeg(pos));
                     }
                 }
             }
@@ -113,18 +121,20 @@ public class Map extends Sprite {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return enemyArrayList;
+        return enemies;
     }
 
-    public static void drawMap(int[][] map, SpriteBatch batch, float opacity){
-        spriteMap.setScale((float) graphicScale/numCol,(float) graphicScale/numRow);
+    public static void drawMap(int[][] map, SpriteBatch batch, float opacity) {
+        spriteMap.setScale((float) graphicScale / numCol, (float) graphicScale / numRow);
         for (int row = 0; row < map.length; row++) {
-            for (int col = 0; col < map[row].length; col++){
-                if(map[row][col] != -1){
-                    spriteMap.setPosition(col*tilesize*graphicScale,-row*tilesize*graphicScale);
-                    spriteMap.setOrigin(0,0);
-                    //                    spriteMap.setPosition(0,0);
-                    spriteMap.setRegion((map[row][col]%numCol)*tilesize, map[row][col] / numRow*tilesize,tilesize,tilesize);
+            for (int col = 0; col < map[row].length; col++) {
+                if (map[row][col] != -1) {
+                    spriteMap.setPosition(col * tilesize * graphicScale, -row * tilesize * graphicScale);
+                    spriteMap.setOrigin(0, 0);
+                    // spriteMap.setPosition(0,0);
+                    spriteMap.setRegion((map[row][col] % numCol) * tilesize, map[row][col] / numRow * tilesize,
+                            tilesize,
+                            tilesize);
                     spriteMap.setAlpha(opacity);
                     spriteMap.draw(batch);
 

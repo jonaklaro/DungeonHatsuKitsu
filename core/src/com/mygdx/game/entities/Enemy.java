@@ -1,5 +1,6 @@
 package com.mygdx.game.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 
@@ -7,43 +8,68 @@ public class Enemy extends Character {
     int width;
     int height;
     int range;
+
+    GameScreen gameScreen;
+
+    protected float reactionTimeMax;
+
     public Enemy(Vector2 pos) {
         super(pos, "enemy/enemies.png");
         range = 100;
+
+        gameScreen = GameScreen.getInstance();
     }
 
-    void dropLoot(){
-        System.out.println("loot drop");
+    public void dropLoot() {
+        return;
     }
 
-    public void update(float delta){
+    public void update(float delta) {
         searchPlayer();
         entityUpdate(delta, GameScreen.enemies);
         flipCharacter();
     }
 
-    //a function to let the enemy know when the player is in range
+    // a function to let the enemy know when the player is in range
     void searchPlayer() {
-        for (Player p: GameScreen.players){
-            float dist = GameScreen.getDistance(p.getMidPosition(), this.getMidPosition());
-            if(dist < range){
-                //a function to determine which direction the enemy should head in
+        for (Player p : GameScreen.players) {
+            // a function to determine which direction the enemy should head in
+            if (isInRange(p))
                 determineDirection(p);
-            } else{
-                //set enemy direction to 0 if player is too far away
+            // set enemy direction to 0 if player is too far away
+            else
                 direction.x = 0;
-            }
+
         }
     }
 
-    //a function to determine which direction the enemy should head in
+    boolean isInRange(Player player) {
+        float dist = GameScreen.getDistance(player.getMidPosition(), this.getMidPosition());
+        return dist < range;
+    }
+
+    // a function to determine which direction the enemy should head in
     void determineDirection(Player p) {
-        if(p.getMidPosition().x > this.getMidPosition().x){
-            direction.x = 1;
+        float deltaTime = Gdx.graphics.getDeltaTime();
+
+        System.out.println(reactionTime);
+
+        // delay direction by reactionTime and delay time
+        if (reactionTime > 0)
+            reactionTime -= deltaTime;
+        else {
+            // set default reaction time from class
+            reactionTime = reactionTimeMax;
+
+            // set enemy to 1 if player is to the right
+            if (p.getMidX() > this.getMidX())
+                direction.x = 1;
+
+            // set enemy to -1 if player is to the left
+            else if (p.getMidX() < this.getMidX())
+                direction.x = -1;
         }
-        else{
-            direction.x = -1;
-        }
+
     }
 
 }

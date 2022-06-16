@@ -86,17 +86,6 @@ public class Entity extends Sprite implements Serializable {
         return recs;
     }
 
-    //remove character from its list when its dead
-    public void updateExisting(Character c, ArrayList characters){
-        if (c.getHealth() <= 0){
-
-            if (c.getClass().getSuperclass() == Enemy.class) {
-                ((Enemy) c).dropLoot();
-            }
-            characters.remove(c);
-        }
-    }
-
     public int getHealth(){
         return health;
     }

@@ -5,10 +5,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entities.loot.LootHealth;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Pegpeg extends Enemy implements Serializable {
+public class Pegpeg extends Enemy {
 
     ArrayList<Attack> attacks;
 
@@ -25,6 +24,8 @@ public class Pegpeg extends Enemy implements Serializable {
         speed = 0;
         sprite.flip(true,false);
         range = 600;
+        reactionTime = 0.2f;
+        reactionTimeMax = reactionTime;
     }
 
     @Override

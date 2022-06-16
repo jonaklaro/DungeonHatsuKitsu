@@ -4,16 +4,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Map;
 import com.mygdx.game.Settings;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Character extends Entity implements Serializable {
+public class Character extends Entity {
     boolean flipped;
     boolean multi;
 
     boolean boostRight = false;
     boolean boostLeft = false;
 
+    float reactionTime;
     int speed;
 
     float color = 1;
@@ -59,7 +59,6 @@ public class Character extends Entity implements Serializable {
     public void entityUpdate(float delta, ArrayList characters){
         move(delta);
         drawHurt();
-        updateExisting(this, characters);
     }
 
     //a method to move the different axes of the hit box and do colDet
