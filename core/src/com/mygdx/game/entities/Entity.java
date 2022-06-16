@@ -29,6 +29,8 @@ public class Entity extends Sprite implements Serializable {
     int maxHealth;
     int credits;
 
+    public float width;
+    public float height;
     private float midX;
     public float midY;
 
@@ -118,7 +120,7 @@ public class Entity extends Sprite implements Serializable {
                     if(direction.x > 0){ //character is moving Right
                         // if character is player, see if they are doing a wall jump
                         if (this.getClass() == Player.class){
-                            ((Player) this).wallJump(((Player) this).multi, ((Player) this).boostRight);
+                            ((Player) this).wallJump(((Player) this).boostRight);
                         }
                         //set x coordinate of hit box to x coordinate of the border - hit box width
                         hitRect.x = border.x-hitRect.width;
@@ -126,7 +128,7 @@ public class Entity extends Sprite implements Serializable {
 
                     if(direction.x < 0){ //Left
                         if (this.getClass() == Player.class){
-                            ((Player) this).wallJump(((Player) this).multi, ((Player) this).boostLeft);
+                            ((Player) this).wallJump(((Player) this).boostLeft);
                         }
                         hitRect.x = border.x+(border.width);
                     }
@@ -239,8 +241,10 @@ public class Entity extends Sprite implements Serializable {
     public void updateSprite(){
         //set Sprite pos to calculated pos and set midX and midY
         sprite.setPosition(hitRect.x, hitRect.y);
-        setMidX(sprite.getX()+(sprite.getWidth()*playerScale/2));
-        setMidY(sprite.getY()+(sprite.getHeight()*playerScale/2));
+        midX = hitRect.x + hitRect.width/2;
+        midY = hitRect.y + hitRect.height/2;
+//        setMidX(sprite.getX()+(sprite.getWidth()*playerScale/2));
+//        setMidY(sprite.getY()+(sprite.getHeight()*playerScale/2));
     }
 
     public Vector2 getPosition(){
@@ -274,14 +278,6 @@ public class Entity extends Sprite implements Serializable {
 
     public void setMidY(float midY) {
         this.midY = midY;
-    }
-
-    public int getMaxHealth() {
-        return maxHealth;
-    }
-
-    public int getCredits() {
-        return credits;
     }
 
     public int getDamage(){

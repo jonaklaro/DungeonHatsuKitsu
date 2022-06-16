@@ -10,7 +10,9 @@ public class Loot extends Entity {
 
     public Loot(Vector2 pos, String spriteLink) {
         super(pos, spriteLink);
-        hitRect = new Rectangle(pos.x,pos.y,sprite.getWidth()*playerScale,sprite.getHeight()*playerScale);
+        width = sprite.getWidth()*playerScale;
+        height = sprite.getHeight()*playerScale;
+        hitRect = new Rectangle(pos.x-width/2, pos.y-height/2,width,height);
 
     }
 

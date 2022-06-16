@@ -2,7 +2,6 @@ package com.mygdx.game.entities;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
-import com.mygdx.game.entities.loot.Loot;
 
 public class Enemy extends Character {
     int width;
@@ -37,7 +36,6 @@ public class Enemy extends Character {
         }
     }
 
-    //todo: make this function working
     //a function to determine which direction the enemy should head in
     void determineDirection(Player p) {
         if(p.getMidPosition().x > this.getMidPosition().x){

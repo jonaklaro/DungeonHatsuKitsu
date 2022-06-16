@@ -95,7 +95,7 @@ public class Player extends Character implements Serializable {
     }
 
     //a function to let the player do wall jumps
-    public void wallJump(boolean multi, boolean boost){
+    public void wallJump(boolean boost){
 
         boolean dir;
         dir = direction.x > 0;
