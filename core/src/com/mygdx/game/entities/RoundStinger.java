@@ -17,6 +17,7 @@ public class RoundStinger extends Enemy {
     setHealth(5);
     damage = 2;
     speed = 100;
+    maxSpeed = speed;
     range = 400;
     reactionTime = 2;
     reactionTimeMax = reactionTime;

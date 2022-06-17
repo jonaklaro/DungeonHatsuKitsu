@@ -66,6 +66,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
   public GameScreen(Game game) {
     this.game = game;
+
     state = GAME_READY;
     batch = new SpriteBatch();
     mapp = new Map();
@@ -160,7 +161,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
         Input.Keys.UP,
         Input.Keys.DOWN);
 
-    if (Gdx.input.justTouched()) {
+    if (Gdx.input.isKeyPressed(Input.Keys.S)) {
       multi = false;
       state = GAME_RUNNING;
       players.add(new Player(mapp.getPlayer("assets/maps/level1_entities.csv"), false, inputController_p1));
@@ -172,6 +173,8 @@ public class GameScreen extends ScreenAdapter implements Serializable {
       players.add(new Player(mapp.getPlayer("assets/maps/level1_entities.csv"), true, inputController_p2));
       state = GAME_RUNNING;
     }
+    loadGameState();
+
   }
 
   public void updatePaused(float delta) {
@@ -194,12 +197,11 @@ public class GameScreen extends ScreenAdapter implements Serializable {
       loadGameState();
     }
 
-
     for (Player p : players) {
       int size = players.size();
       p.update(delta);
-      
-      if (p.getHealth() <= 0) { 
+
+      if (p.getHealth() <= 0) {
         players.remove(p);
         break;
       }
@@ -306,10 +308,10 @@ public class GameScreen extends ScreenAdapter implements Serializable {
     x /= players.size();
     y /= players.size();
 
-    // lerp to position
-    float lerp = 0.1f;
-    x = lerp * x + (1 - lerp) * camera.position.x;
-    y = lerp * y + (1 - lerp) * camera.position.y;
+    // leap to position
+    float leap = 0.1f;
+    x = leap * x + (1 - leap) * camera.position.x;
+    y = leap * y + (1 - leap) * camera.position.y;
 
     return new Vector2(x, y);
   }
@@ -342,9 +344,8 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
   public void saveGameState() {
     try {
-
       gameData.loadInfo(players);
-      gameData.saveGameState();
+      gameData.writeGameState();
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -354,14 +355,11 @@ public class GameScreen extends ScreenAdapter implements Serializable {
   public void loadGameState() {
 
     try {
-      FileInputStream fis = new FileInputStream("game.save");
-      ObjectInputStream ois = new ObjectInputStream(fis);
-      gameData = (GameData) ois.readObject();
-      ois.close();
-      fis.close();
+      gameData.loadGameState();
       gameData.writeInfo(players);
     } catch (IOException | ClassNotFoundException e) {
-      e.printStackTrace();
+      return;
+      // e.printStackTrace();
     }
   }
 

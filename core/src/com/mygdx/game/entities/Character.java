@@ -14,9 +14,11 @@ public class Character extends Entity {
     boolean boostLeft = false;
 
     float reactionTime;
-    int speed;
+    float shootDelay;
+    float shootDelayMax;
+    float speed;
+    float maxSpeed;
 
-    float color = 1;
     int jumpCount;
     boolean jumped;
 
@@ -26,8 +28,11 @@ public class Character extends Entity {
     int[][] hidden;
     int[][] enemies;
 
+    ArrayList<PlayerBullet> attacks;
+    boolean attacked;
+
     // constructor for characters
-    public Character(Vector2 pos, String spriteLink){
+    public Character(Vector2 pos, String spriteLink) {
         super(pos, spriteLink);
 
         direction.y = 0;
@@ -44,26 +49,46 @@ public class Character extends Entity {
         hiddenRecs = createRectList(hidden);
     }
 
+    // a function to create the attack
+    void attack() {
+    }
+
+    // a function to move the attacks
+    void moveAttack(float delta) {
+        if (attacks != null) {
+            for (PlayerBullet a : attacks) {
+                a.move(delta);
+                if (a.collided) {
+                    attacks.remove(a);
+                    break;
+                }
+                if (attacks.isEmpty())
+                    break;
+            }
+        }
+    }
+
     void flipCharacter() {
-        if (direction.x == -1 && !flipped){
-            sprite.flip(true,false);
+        if (direction.x == -1 && !flipped) {
+            sprite.flip(true, false);
             flipped = true;
         }
-        if (direction.x == 1 && flipped){
-            sprite.flip(true,false);
+        if (direction.x == 1 && flipped) {
+            sprite.flip(true, false);
             flipped = false;
         }
     }
 
     // general update method for characters
-    public void entityUpdate(float delta, ArrayList characters){
+    public void entityUpdate(float delta, ArrayList characters) {
         move(delta);
+        moveAttack(delta);
         drawHurt();
     }
 
-    //a method to move the different axes of the hit box and do colDet
-    void move(float delta){
-        float offset = direction.x*speed*delta;
+    // a method to move the different axes of the hit box and do colDet
+    void move(float delta) {
+        float offset = direction.x * speed * delta;
         hitRect.x += offset;
 
         collision("hor");
@@ -75,12 +100,12 @@ public class Character extends Entity {
     }
 
     // if color is lower than 1, slowly count it up and set Sprite color accordingly
-    public void drawHurt(){
-        if (color >= 1){
+    public void drawHurt() {
+        if (color >= 1) {
             color = 1;
         } else {
-            color += 10/200f;
+            color += 10 / 200f;
         }
-        sprite.setColor(1,color,color,1);
+        sprite.setColor(1, color, color, 1);
     }
 }

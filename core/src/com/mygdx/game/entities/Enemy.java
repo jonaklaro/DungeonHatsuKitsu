@@ -5,19 +5,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 
 public class Enemy extends Character {
-    int width;
-    int height;
+    float width;
+    float height;
     int range;
-
-    GameScreen gameScreen;
 
     protected float reactionTimeMax;
 
     public Enemy(Vector2 pos) {
         super(pos, "enemy/enemies.png");
         range = 100;
-
-        gameScreen = GameScreen.getInstance();
     }
 
     public void dropLoot() {
@@ -52,8 +48,6 @@ public class Enemy extends Character {
     void determineDirection(Player p) {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        System.out.println(reactionTime);
-
         // delay direction by reactionTime and delay time
         if (reactionTime > 0)
             reactionTime -= deltaTime;
@@ -69,7 +63,9 @@ public class Enemy extends Character {
             else if (p.getMidX() < this.getMidX())
                 direction.x = -1;
         }
+    }
 
+    void shoot() {
     }
 
 }
