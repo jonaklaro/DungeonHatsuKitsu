@@ -68,9 +68,15 @@ public class Entity extends Sprite implements Serializable {
     // basic Sprite create function
     Sprite createSprite(String link) {
         texture = new Texture(link);
+
         sprite = new Sprite(texture);
         sprite.setOrigin(0, 0);
         return sprite;
+    }
+
+    Sprite getSpriteByPos(int row, int col) {
+        int grid = tilesize * 2;
+        return new Sprite(texture, col * grid, row * grid, grid, grid);
     }
 
     // Add rectangles to list (for borders)
@@ -230,8 +236,21 @@ public class Entity extends Sprite implements Serializable {
         }
     }
 
+    float smooth = 0.0f;
+    private float smoothValue(float value) {
+      
+      // less smooth when diffrence is larger
+      float diffrence = 0.6f;
+
+      
+      smooth = (float) (smooth * diffrence + value * (1 - diffrence));
+
+        return smooth;
+    }
+
     public void applyGravity(float delta) {
         gravity -= gravSpeed * delta;
+        gravity = smoothValue(gravity);
         hitRect.y += gravity;
         collision("ver");
     }

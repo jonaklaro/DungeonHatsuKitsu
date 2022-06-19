@@ -14,11 +14,10 @@ public class Pegpeg extends Enemy {
         super(pos);
         gameScreen = GameScreen.getInstance();
         attacks = new ArrayList<>();
-        width = 32;
-        height = 32;
-        sprite.setScale(.5f, 1);
-        sprite.setRegion(0, 0, width, height);
-        hitRect = new Rectangle(pos.x, pos.y, width * playerScale, height * playerScale);
+
+        sprite = getSpriteByPos(0, 0);
+
+        hitRect = new Rectangle(pos.x, pos.y, 32 * playerScale, 32 * playerScale);
         setHealth(7);
         damage = 2;
         speed = 0;
