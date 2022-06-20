@@ -2,11 +2,10 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 
-
-public class Praktikum extends Game {
+public class AcrobatDungeon extends Game {
 	private final Game game;
 
-	public Praktikum(){
+	public AcrobatDungeon() {
 		game = this;
 	}
 
@@ -14,7 +13,7 @@ public class Praktikum extends Game {
 	public void create() {
 		setScreen(new GameScreen(game));
 
-//		setScreen(new MenuScreen(game));
-//		setScreen(new OptionScreen());
+		// setScreen(new MenuScreen(game));
+		// setScreen(new OptionScreen());
 	}
 }

@@ -8,9 +8,6 @@ import com.mygdx.game.entities.Enemy;
 import com.mygdx.game.entities.Pegpeg;
 import com.mygdx.game.entities.RoundStinger;
 
-// import GameScreen;
-import com.mygdx.game.GameScreen;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -31,7 +28,7 @@ public class Map extends Sprite {
     static int tilesize = Settings.tilesize;
     static int graphicScale = Settings.graphicScale;
 
-    // gamescreen
+    // gameScreen
     public static GameScreen gameScreen;
 
     public Map() {

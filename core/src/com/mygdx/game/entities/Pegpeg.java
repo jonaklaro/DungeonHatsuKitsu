@@ -10,69 +10,63 @@ import java.util.ArrayList;
 
 public class Pegpeg extends Enemy {
 
-    public Pegpeg(Vector2 pos) {
-        super(pos);
-        gameScreen = GameScreen.getInstance();
-        attacks = new ArrayList<>();
+      GameScreen gameScreen;
 
-        sprite = getSpriteByPos(0, 0);
+      public Pegpeg(Vector2 pos) {
+            super(pos);
+            gameScreen = GameScreen.getInstance();
 
-        hitRect = new Rectangle(pos.x, pos.y, 32 * playerScale, 32 * playerScale);
-        setHealth(7);
-        damage = 2;
-        speed = 0;
-        maxSpeed = speed;
-        sprite.flip(true, false);
-        range = 600;
-        reactionTime = 0.2f;
-        reactionTimeMax = reactionTime;
-        shootDelay = 1;
-        shootDelayMax = shootDelay;
-    }
+            sprite = getSpriteByPos(0, 0);
 
-    @Override
-    public void dropLoot() {
-        super.dropLoot();
-        GameScreen.loot.add(new LootHealth(new Vector2(getMidX(), getMidY())));
-    }
+            hitRect = new Rectangle(pos.x, pos.y, 32 * playerScale, 32 * playerScale);
+            setHealth(7);
+            damage = 1;
+            speed = 0;
+            maxSpeed = speed;
+            sprite.flip(true, false);
+            range = 600;
+            reactionTime = 0.2f;
+            reactionTimeMax = reactionTime;
+            shootDelay = 2;
+            shootDelayMax = shootDelay;
+      }
 
-    // the enemy should shoot at the player when in range
-    @Override
-    void searchPlayer() {
-        for (Player p : GameScreen.players) {
-            float dist = GameScreen.getDistance(p.getMidPosition(), this.getMidPosition());
-            if (dist < range) {
-                // a function to determine which direction the enemy should head in
-                determineDirection(p);
-                if (dist < range / 2f) {
-                    if (shootDelay > 0)
-                        shootDelay -= Gdx.graphics.getDeltaTime();
-                    else {
-                        shootDelay = shootDelayMax;
-                        // shoot();
-                    }
-                }
-            } else {
-                // set enemy direction to 0 if player is too far away
-                direction.x = 0;
+      @Override
+      public void dropLoot() {
+            super.dropLoot();
+            GameScreen.loot.add(new LootHealth(new Vector2(getMidX(), getMidY())));
+      }
+
+      // the enemy should shoot at the player when in range
+      @Override
+      void searchPlayer() {
+            for (Player p : GameScreen.players) {
+                  float dist = GameScreen.getDistance(p.getMidPosition(), this.getMidPosition());
+                  if (dist < range) {
+                        // a function to determine which direction the enemy should head in
+                        determineDirection(p);
+                        if (dist < range / 2f) {
+                              if (shootDelay > 0)
+                                    shootDelay -= Gdx.graphics.getDeltaTime();
+                              else {
+                                    shootDelay = shootDelayMax;
+                                    shoot();
+                              }
+                        }
+                  } else {
+                        // set enemy direction to 0 if player is too far away
+                        direction.x = 0;
+                  }
             }
-        }
-    }
+      }
 
-    // a function to make the enemy shoot
-    @Override
-    void shoot() {
-        attack();
-        // if (attacks.size() < 1) {
-        // attacks.add(new Attack(new Vector2(getMidX(), getMidY()), , this));
-        // }
-        System.out.println(attacks);
-    }
-
-    void attack() {
-        attacked = true;
-        if (attacks.size() <= 3) {
-            attacks.add(new PlayerBullet(getPosition(), this));
-        }
-    }
+      // a function to make the enemy shoot
+      @Override
+      void shoot() {
+            // attack();
+            // if (gameScreen.enemyBullets.size() < 1) {
+            gameScreen = GameScreen.getInstance();
+            gameScreen.enemyBullets.add(new EnemyBullet(getPosition(), this));
+            // }
+      }
 }
