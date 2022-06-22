@@ -21,6 +21,7 @@ public class Player extends Character {
       boolean invulnerable;
       float invulnerableTime;
       float invulnerableTimeMax;
+      ArrayList<PlayerBullet> bullets;
 
       public Player(Vector2 pos, boolean multi, InputController input) {
             super(pos, "character/char_small.png");
@@ -37,6 +38,7 @@ public class Player extends Character {
             sprite.setScale(.5f, 1);
             sprite.setRegion(10, 3, 34, 61);
             hitRect = new Rectangle(pos.x, pos.y, 34 * playerScale, sprite.getHeight() * playerScale);
+            bullets = new ArrayList<>();
       }
 
       // a function to handle the player's input
@@ -84,8 +86,10 @@ public class Player extends Character {
       // a function to create the attack
       void attack() {
             attacked = true;
-            if (gameScreen.playerBullets.size() < 3) {
-                  gameScreen.playerBullets.add(new PlayerBullet(getPosition(), this));
+            if (bullets.size() < 3) {
+                  PlayerBullet bullet = new PlayerBullet(getPosition(), this);
+                  bullets.add(bullet);
+                  gameScreen.playerBullets.add(bullet);
             }
       }
 
@@ -162,10 +166,22 @@ public class Player extends Character {
       public void update(float delta) {
             input();
 
+            updateBullets(delta);
+
             updateinvulnerableTime();
 
             // moveAttack(delta);
             entityUpdate(delta, GameScreen.players);
+      }
+
+      // a function to update the player's bullets
+      private void updateBullets(float delta) {
+            for (PlayerBullet pb : bullets) {
+                  int size = bullets.size();
+                  pb.update(delta, this);
+                  if (size != bullets.size())
+                        break;
+            }
       }
 
       // Collision detection for the hidden recs
@@ -179,17 +195,6 @@ public class Player extends Character {
                   }
             }
       }
-
-      // // Collision detection for the loot
-      // public void lootColDet() {
-      // for (Loot loot : GameScreen.loot) {
-      // if (hitRect.overlaps(loot.hitRect)) {
-      // add(loot);
-      // GameScreen.loot.remove(loot);
-      // break;
-      // }
-      // }
-      // }
 
       // a function to add loot to the player
       public void add(Loot loot) {

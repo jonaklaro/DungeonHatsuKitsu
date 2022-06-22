@@ -30,10 +30,11 @@ public class PlayerBullet extends Character {
             speed = 500;
       }
 
-      public void update(float delta) {
+      public void update(float delta, Player p) {
             // if (!gameScreen.playerBullets.isEmpty()) {
             move(delta);
             if (collided) {
+                  p.bullets.remove(this);
                   gameScreen.playerBullets.remove(this);
                   return;
             }

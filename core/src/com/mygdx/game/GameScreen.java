@@ -249,12 +249,12 @@ public class GameScreen extends ScreenAdapter implements Serializable {
                   l.update(delta);
             }
 
-            for (PlayerBullet pb : playerBullets) {
-                  int size = playerBullets.size();
-                  pb.update(delta);
-                  if (size != playerBullets.size())
-                        break;
-            }
+            // for (PlayerBullet pb : playerBullets) {
+            // int size = playerBullets.size();
+            // pb.update(delta);
+            // if (size != playerBullets.size())
+            // break;
+            // }
 
             for (EnemyBullet eb : enemyBullets) {
                   int size = enemyBullets.size();
