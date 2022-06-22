@@ -170,7 +170,6 @@ public class Player extends Character {
 
             updateinvulnerableTime();
 
-            // moveAttack(delta);
             entityUpdate(delta, GameScreen.players);
       }
 

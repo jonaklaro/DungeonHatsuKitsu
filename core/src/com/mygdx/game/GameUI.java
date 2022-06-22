@@ -9,45 +9,43 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-// import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.entities.Player;
 
 public class GameUI extends Sprite {
-        private static Texture settings = new Texture("settingsBoard.png");
-        private static Sprite setSprite = new Sprite(settings);
-        // private static int graphicScale = Settings.graphicScale;
+      private static Texture settings = new Texture("settingsBoard.png");
+      private static Sprite setSprite = new Sprite(settings);
+      // private static int graphicScale = Settings.graphicScale;
 
-        private static FreeTypeFontGenerator fontGenerator;
-        private static FreeTypeFontGenerator.FreeTypeFontParameter fontParameter;
-        private static BitmapFont font;
-        static Texture gradient;
-        static NinePatch healthBar;
+      private static FreeTypeFontGenerator fontGenerator;
+      private static FreeTypeFontGenerator.FreeTypeFontParameter fontParameter;
+      private static BitmapFont font;
+      static Texture gradient;
+      static NinePatch healthBar;
 
-        public static void setup() {
-                fontGenerator = new FreeTypeFontGenerator(
-                                Gdx.files.internal("fonts\\8-bit-operator\\8bitOperatorPlus-Regular.ttf"));
-                fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-                fontParameter.size = 30;
-                fontParameter.borderWidth = 1;
-                fontParameter.borderColor = Color.BLACK;
-                fontParameter.color = Color.WHITE;
-                font = fontGenerator.generateFont(fontParameter);
-                gradient = new Texture("colors.png");
-                healthBar = new NinePatch(gradient, 0, 0, 0, 0);
-        }
+      public static void setup() {
+            fontGenerator = new FreeTypeFontGenerator(
+                        Gdx.files.internal("fonts\\8-bit-operator\\8bitOperatorPlus-Regular.ttf"));
+            fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+            fontParameter.size = 30;
+            fontParameter.borderWidth = 1;
+            fontParameter.borderColor = Color.BLACK;
+            fontParameter.color = Color.WHITE;
+            font = fontGenerator.generateFont(fontParameter);
+            gradient = new Texture("colors.png");
+            healthBar = new NinePatch(gradient, 0, 0, 0, 0);
+      }
 
-        public static void settings(SpriteBatch batch, Camera cam) {
-                float zoom = GameScreen.zoom;
+      public static void settings(SpriteBatch batch, Camera cam) {
+            float zoom = GameScreen.zoom;
 
-                setSprite.setScale(zoom * 8);
-                setSprite.setOrigin(0, 0);
-                setSprite.setPosition(cam.position.x - setSprite.getWidth() * zoom * 4,
-                                cam.position.y - setSprite.getHeight() * zoom * 4);
-                setSprite.draw(batch);
-        }
+            setSprite.setScale(zoom * 8);
+            setSprite.setOrigin(0, 0);
+            setSprite.setPosition(cam.position.x - setSprite.getWidth() * zoom * 4,
+                        cam.position.y - setSprite.getHeight() * zoom * 4);
+            setSprite.draw(batch);
+      }
 
-        static void drawText(SpriteBatch batch, String text, float x, float y) {
-                font.setUseIntegerPositions(false);
-                font.draw(batch, text, x, y);
-        }
+      static void drawText(SpriteBatch batch, String text, float x, float y) {
+            font.setUseIntegerPositions(false);
+            font.draw(batch, text, x, y);
+      }
 }

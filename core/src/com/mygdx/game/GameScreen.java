@@ -249,13 +249,6 @@ public class GameScreen extends ScreenAdapter implements Serializable {
                   l.update(delta);
             }
 
-            // for (PlayerBullet pb : playerBullets) {
-            // int size = playerBullets.size();
-            // pb.update(delta);
-            // if (size != playerBullets.size())
-            // break;
-            // }
-
             for (EnemyBullet eb : enemyBullets) {
                   int size = enemyBullets.size();
                   eb.update(delta);
@@ -326,8 +319,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             Map.drawMap(hidden, batch, opacity);
 
             for (Player p : players) {
-                  GameUI.drawText(batch, "Health: " + p.getHealth(), p.getMidPosition().x,
-                              p.getMidPosition().y);
+                  GameUI.drawText(batch, "Health: " + p.getHealth(), p.getMidPosition().x, p.getMidPosition().y);
             }
 
             backgroundSprite.setPosition((float) (getCameraPos().x / 1.5) - 2 * tilesize * graphicScale,
