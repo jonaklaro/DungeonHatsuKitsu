@@ -170,7 +170,7 @@ public class Player extends Character {
 
             updateinvulnerableTime();
 
-            entityUpdate(delta, GameScreen.players);
+            entityUpdate(delta, gameScreen.players);
       }
 
       // a function to update the player's bullets

@@ -192,7 +192,6 @@ public class GameScreen extends ScreenAdapter implements Serializable {
                   state = State.RUNNING;
             }
             collisionController = new CollisionController();
-            loadGameState();
 
       }
 
@@ -238,6 +237,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
                   if (e.getHealth() <= 0) {
                         e.dropLoot();
                         enemies.remove(e);
+                        saveGameState();
                         break;
                   }
 
@@ -380,7 +380,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
       public void saveGameState() {
             try {
-                  gameData.loadInfo(players);
+                  gameData.loadInfo();
                   gameData.writeGameState();
 
             } catch (IOException e) {

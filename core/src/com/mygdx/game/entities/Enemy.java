@@ -34,10 +34,10 @@ public class Enemy extends Character {
       // a function to let the enemy know when the player is in range
       void searchPlayer() {
             ArrayList<Player> targetsInRange = new ArrayList<Player>();
-            for (Player p : GameScreen.players) {
+            for (Player p : gameScreen.players) {
                   // a function to determine which direction the enemy should head in
                   if (isInRange(p))
-                    targetsInRange.add(p);
+                        targetsInRange.add(p);
             }
 
             if (targetsInRange.size() > 0) {
@@ -46,10 +46,10 @@ public class Enemy extends Character {
                   Player target = targetsInRange.get(random);
                   determineDirection(target);
                   // set enemy direction to 0 if player is too far away
-            }else {
-              direction.x = 0;
+            } else {
+                  direction.x = 0;
             }
-                  // if the enemy is in range, it will head towards the player
+            // if the enemy is in range, it will head towards the player
       }
 
       boolean isInRange(Player player) {

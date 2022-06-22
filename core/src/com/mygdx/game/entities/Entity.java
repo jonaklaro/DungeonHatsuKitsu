@@ -12,7 +12,7 @@ import com.mygdx.game.Settings;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Entity extends Sprite implements Serializable {
+public class Entity implements Serializable {
       Texture texture;
       public Sprite sprite;
       public Rectangle hitRect;
