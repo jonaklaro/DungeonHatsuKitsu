@@ -63,7 +63,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
       public static ArrayList<Enemy> enemies;
       public static ArrayList<Player> players;
-      public static ArrayList<Loot> loot;
+      public ArrayList<Loot> loot;
       public ArrayList<PlayerBullet> playerBullets;
       public ArrayList<EnemyBullet> enemyBullets;
 
@@ -93,11 +93,10 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             playerBullets = new ArrayList<>();
             enemyBullets = new ArrayList<>();
 
-            enemies = mapp.getEnemies("assets/maps/level1_enemies.csv", enemies);
-
             camera.position.set(mapp.getPlayer("assets/maps/level1_entities.csv"), 0);
             minDist = 500;
             distFactor = 2000;
+
             zoom = (float) minDist / distFactor * 2;
             camera.zoom = zoom;
 
@@ -118,6 +117,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
             // set instance of the game screen
             instance = this;
+            enemies = mapp.getEnemies("assets/maps/level1_enemies.csv", enemies);
 
       }
 
@@ -263,7 +263,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
                         break;
             }
 
-            if (players.isEmpty())
+            if (players.isEmpty() || enemies.isEmpty())
                   state = State.OVER;
 
       }

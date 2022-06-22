@@ -45,6 +45,8 @@ public class Entity extends Sprite implements Serializable {
       int damage;
       float color = 1;
 
+      public boolean collided;
+
       enum KeyBlock {
             NO_BLOCK,
             RIGHT,
@@ -115,7 +117,7 @@ public class Entity extends Sprite implements Serializable {
       }
 
       // A method to detect horizontal and vertical collisions
-      public void collision(String dir) {
+      public boolean collision(String dir) {
             // horizontal detection
             if (dir.equals("hor")) {
                   // for every border, check if it's overlapping with own hit box
@@ -146,6 +148,10 @@ public class Entity extends Sprite implements Serializable {
                                     ((EnemyBullet) this).collided = true;
                                     break;
                               }
+                              if (this.getClass() == Player.class)
+                                    ((Player) this).collided = true;
+
+                              return true;
                         }
                   }
 
@@ -173,15 +179,22 @@ public class Entity extends Sprite implements Serializable {
                                           ((Player) this).resetPlayerParameters();
                                     }
                               }
+
+                              // Collision detection for the hidden recs and Loot
+                              if (this.getClass() == Player.class) {
+                                    ((Player) this).hiddenColDet();
+                                    // ((Player) this).lootColDet();
+                              }
+
+                              return true;
                         }
                   }
             }
 
-            // Collision detection for the hidden recs and
-            if (this.getClass() == Player.class) {
-                  ((Player) this).hiddenColDet();
-                  ((Player) this).lootColDet();
-            }
+            if (this.getClass() == Player.class)
+                  ((Player) this).collided = false;
+
+            return false;
       }
 
       public void applyGravity(float delta) {

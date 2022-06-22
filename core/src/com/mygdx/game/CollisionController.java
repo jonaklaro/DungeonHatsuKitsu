@@ -23,6 +23,7 @@ public class CollisionController {
                         if (isCollision((Entity) o1, (Entity) o2)) {
                               ((Entity) o1).onCollide((Entity) o2);
                               ((Entity) o2).onCollide((Entity) o1);
+                              return;
                         }
                   }
 

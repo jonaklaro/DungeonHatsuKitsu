@@ -2,8 +2,7 @@ package com.mygdx.game.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
@@ -19,9 +18,9 @@ public class Player extends Character {
       GameScreen gameScreen;
 
       boolean hold = false;
-      boolean invounerabel;
-      float invounerabelTime;
-      float invounerabelTimeMax;
+      boolean invulnerable;
+      float invulnerableTime;
+      float invulnerableTimeMax;
 
       public Player(Vector2 pos, boolean multi, InputController input) {
             super(pos, "character/char_small.png");
@@ -33,8 +32,8 @@ public class Player extends Character {
             kb = KeyBlock.NO_BLOCK;
             health = 10;
             maxHealth = 10;
-            invounerabelTime = 2f;
-            invounerabelTimeMax = invounerabelTime;
+            invulnerableTime = 2f;
+            invulnerableTimeMax = invulnerableTime;
             sprite.setScale(.5f, 1);
             sprite.setRegion(10, 3, 34, 61);
             hitRect = new Rectangle(pos.x, pos.y, 34 * playerScale, sprite.getHeight() * playerScale);
@@ -115,10 +114,10 @@ public class Player extends Character {
                         updateHealth(collidingObject.getDamage());
                         return;
                   }
-                  if (direction.x > 0) { // Right
+                  if (direction.x > 0 && !collided) { // Right
                         hitRect.x = collidingObject.hitRect.x - hitRect.width;
                   }
-                  if (direction.x < 0) { // Left
+                  if (direction.x < 0 && !collided) { // Left
                         hitRect.x = collidingObject.hitRect.x + (collidingObject.hitRect.width);
                   }
                   if (gravity > 0) { // Up
@@ -136,24 +135,25 @@ public class Player extends Character {
                   bullet.collided = true;
                   updateHealth(bullet.getDamage());
             }
+
       }
 
       // a function to uptdate the player's health
       public void updateHealth(int damage) {
-            if (!invounerabel) {
+            if (!invulnerable) {
                   health -= damage;
                   color = 0;
-                  invounerabel = true;
+                  invulnerable = true;
             }
       }
 
-      // a function to update the player's invounerabel time
-      public void updateInvounerabelTime() {
-            if (invounerabel) {
-                  invounerabelTime -= Gdx.graphics.getDeltaTime();
-                  if (invounerabelTime <= 0) {
-                        invounerabel = false;
-                        invounerabelTime = invounerabelTimeMax;
+      // a function to update the player's invulnerable time
+      public void updateinvulnerableTime() {
+            if (invulnerable) {
+                  invulnerableTime -= Gdx.graphics.getDeltaTime();
+                  if (invulnerableTime <= 0) {
+                        invulnerable = false;
+                        invulnerableTime = invulnerableTimeMax;
                   }
             }
       }
@@ -162,7 +162,7 @@ public class Player extends Character {
       public void update(float delta) {
             input();
 
-            updateInvounerabelTime();
+            updateinvulnerableTime();
 
             // moveAttack(delta);
             entityUpdate(delta, GameScreen.players);
@@ -180,16 +180,16 @@ public class Player extends Character {
             }
       }
 
-      // Collision detection for the loot
-      public void lootColDet() {
-            for (Loot loot : GameScreen.loot) {
-                  if (hitRect.overlaps(loot.hitRect)) {
-                        add(loot);
-                        GameScreen.loot.remove(loot);
-                        break;
-                  }
-            }
-      }
+      // // Collision detection for the loot
+      // public void lootColDet() {
+      // for (Loot loot : GameScreen.loot) {
+      // if (hitRect.overlaps(loot.hitRect)) {
+      // add(loot);
+      // GameScreen.loot.remove(loot);
+      // break;
+      // }
+      // }
+      // }
 
       // a function to add loot to the player
       public void add(Loot loot) {
@@ -211,6 +211,10 @@ public class Player extends Character {
 
       public float getMaxHealth() {
             return maxHealth;
+      }
+
+      public boolean isInvulnerable() {
+            return invulnerable;
       }
 
 }

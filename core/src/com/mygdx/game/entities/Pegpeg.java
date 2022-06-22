@@ -14,7 +14,6 @@ public class Pegpeg extends Enemy {
 
       public Pegpeg(Vector2 pos) {
             super(pos);
-            gameScreen = GameScreen.getInstance();
 
             sprite = getSpriteByPos(0, 0);
 
@@ -29,12 +28,14 @@ public class Pegpeg extends Enemy {
             reactionTimeMax = reactionTime;
             shootDelay = 2;
             shootDelayMax = shootDelay;
+
+            gameScreen = GameScreen.getInstance();
       }
 
       @Override
       public void dropLoot() {
             super.dropLoot();
-            GameScreen.loot.add(new LootHealth(new Vector2(getMidX(), getMidY())));
+            gameScreen.loot.add(new LootHealth(new Vector2(getMidX(), getMidY())));
       }
 
       // the enemy should shoot at the player when in range

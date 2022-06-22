@@ -14,129 +14,129 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Map extends Sprite {
-    static BufferedReader br;
-    static int numCol;
-    static int numRow;
-    public float playerX;
-    public float playerY;
-    Texture tileMap;
-    static Sprite spriteMap;
-    public static int[][] mapp;
-    public static int[][] borders;
-    public static int[][] hidden;
-    public static int[][] enemies;
-    static int tilesize = Settings.tilesize;
-    static int graphicScale = Settings.graphicScale;
+      static BufferedReader br;
+      static int numCol;
+      static int numRow;
+      public float playerX;
+      public float playerY;
+      Texture tileMap;
+      static Sprite spriteMap;
+      public static int[][] mapp;
+      public static int[][] borders;
+      public static int[][] hidden;
+      public static int[][] enemies;
+      static int tilesize = Settings.tilesize;
+      static int graphicScale = Settings.graphicScale;
 
-    // gameScreen
-    public static GameScreen gameScreen;
+      // gameScreen
+      public static GameScreen gameScreen;
 
-    public Map() {
-        tileMap = new Texture("forrest.png");
-        spriteMap = new Sprite(tileMap);
-        numCol = Settings.numCol;
-        numRow = Settings.numRow;
+      public Map() {
+            tileMap = new Texture("forrest.png");
+            spriteMap = new Sprite(tileMap);
+            numCol = Settings.numCol;
+            numRow = Settings.numRow;
 
-    }
+      }
 
-    public static void load() {
-        gameScreen = GameScreen.instance;
-        enemies = readMap("assets/maps/level1_enemies.csv");
+      public static void load() {
+            mapp = new int[100][100];
+            gameScreen = GameScreen.instance;
+            enemies = readMap("assets/maps/level1_enemies.csv");
+            borders = readMap("assets/maps/level1_borders.csv");
+            hidden = readMap("assets/maps/level1_hidden_obj.csv");
+            mapp = readMap("assets/maps/level1_map.csv");
+      }
 
-        borders = readMap("assets/maps/level1_borders.csv");
-        hidden = readMap("assets/maps/level1_hidden_obj.csv");
-        mapp = readMap("assets/maps/level1_map.csv");
-    }
+      public static int[][] readMap(String path) {
+            mapp = new int[100][100];
+            try {
+                  br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+                  for (int row = 0; row < mapp.length; row++) {
+                        String line = br.readLine();
+                        String[] tokens = line.split(",");
 
-    public static int[][] readMap(String path) {
-        mapp = new int[40][60];
-        try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
-            for (int row = 0; row < mapp.length; row++) {
-                String line = br.readLine();
-                String[] tokens = line.split(",");
+                        for (int col = 0; col < mapp[row].length; col++) {
+                              mapp[row][col] = Integer.parseInt(tokens[col]);
+                        }
+                  }
 
-                for (int col = 0; col < mapp[row].length; col++) {
-                    mapp[row][col] = Integer.parseInt(tokens[col]);
-                }
+            } catch (Exception e) {
+                  e.printStackTrace();
             }
+            return mapp;
+      }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return mapp;
-    }
+      public Vector2 getPlayer(String path) {
 
-    public Vector2 getPlayer(String path) {
-        mapp = new int[100][100];
+            Vector2 pos = null;
+            try {
+                  br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+                  for (int row = 0; row < mapp.length; row++) {
+                        String line = br.readLine();
+                        String[] tokens = line.split(",");
 
-        Vector2 pos = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
-            for (int row = 0; row < mapp.length; row++) {
-                String line = br.readLine();
-                String[] tokens = line.split(",");
+                        for (int col = 0; col < mapp[row].length; col++) {
+                              if (tokens[col].equals("0")) {
+                                    playerX = col * Settings.tilesize * Settings.graphicScale;
+                                    playerY = -row * Settings.tilesize * Settings.graphicScale;
+                                    pos = new Vector2(playerX, playerY);
+                              }
+                        }
+                  }
 
-                for (int col = 0; col < mapp[row].length; col++) {
-                    if (tokens[col].equals("0")) {
-                        playerX = col * Settings.tilesize * Settings.graphicScale;
-                        playerY = -row * Settings.tilesize * Settings.graphicScale;
-                        pos = new Vector2(playerX, playerY);
-                    }
-                }
+            } catch (Exception e) {
+                  e.printStackTrace();
             }
+            return pos;
+      }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return pos;
-    }
+      public ArrayList<Enemy> getEnemies(String path, ArrayList<Enemy> enemies) {
+            mapp = new int[100][100];
 
-    public ArrayList<Enemy> getEnemies(String path, ArrayList<Enemy> enemies) {
-        mapp = new int[100][100];
+            Vector2 pos;
+            try {
+                  br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+                  for (int row = 0; row < mapp.length; row++) {
+                        String line = br.readLine();
+                        String[] tokens = line.split(",");
 
-        Vector2 pos;
-        try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
-            for (int row = 0; row < mapp.length; row++) {
-                String line = br.readLine();
-                String[] tokens = line.split(",");
+                        for (int col = 0; col < mapp[row].length; col++) {
+                              playerX = col * Settings.tilesize * Settings.graphicScale;
+                              playerY = -row * Settings.tilesize * Settings.graphicScale;
+                              pos = new Vector2(playerX, playerY);
+                              if (tokens[col].equals("0")) {
+                                    enemies.add(new Pegpeg(pos));
+                              }
+                              if (tokens[col].equals("1")) {
+                                    enemies.add(new RoundStinger(pos));
+                              }
+                        }
+                  }
 
-                for (int col = 0; col < mapp[row].length; col++) {
-                    playerX = col * Settings.tilesize * Settings.graphicScale;
-                    playerY = -row * Settings.tilesize * Settings.graphicScale;
-                    pos = new Vector2(playerX, playerY);
-                    if (tokens[col].equals("0")) {
-                        enemies.add(new RoundStinger(pos));
-                    }
-                    if (tokens[col].equals("1")) {
-                        enemies.add(new Pegpeg(pos));
-                    }
-                }
+            } catch (Exception e) {
+                  e.printStackTrace();
             }
+            return enemies;
+      }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return enemies;
-    }
+      public static void drawMap(int[][] map, SpriteBatch batch, float opacity) {
+            spriteMap.setScale((float) graphicScale / numCol, (float) graphicScale / numRow);
+            for (int row = 0; row < map.length; row++) {
+                  for (int col = 0; col < map[row].length; col++) {
+                        if (map[row][col] != -1) {
+                              spriteMap.setPosition(col * tilesize * graphicScale, -row * tilesize * graphicScale);
+                              spriteMap.setOrigin(0, 0);
+                              // spriteMap.setPosition(0,0);
+                              spriteMap.setRegion((map[row][col] % numCol) * tilesize,
+                                          map[row][col] / numRow * tilesize,
+                                          tilesize,
+                                          tilesize);
+                              spriteMap.setAlpha(opacity);
+                              spriteMap.draw(batch);
 
-    public static void drawMap(int[][] map, SpriteBatch batch, float opacity) {
-        spriteMap.setScale((float) graphicScale / numCol, (float) graphicScale / numRow);
-        for (int row = 0; row < map.length; row++) {
-            for (int col = 0; col < map[row].length; col++) {
-                if (map[row][col] != -1) {
-                    spriteMap.setPosition(col * tilesize * graphicScale, -row * tilesize * graphicScale);
-                    spriteMap.setOrigin(0, 0);
-                    // spriteMap.setPosition(0,0);
-                    spriteMap.setRegion((map[row][col] % numCol) * tilesize, map[row][col] / numRow * tilesize,
-                            tilesize,
-                            tilesize);
-                    spriteMap.setAlpha(opacity);
-                    spriteMap.draw(batch);
-
-                }
+                        }
+                  }
             }
-        }
-    }
+      }
 }

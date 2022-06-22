@@ -5,8 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 
 public class PlayerBullet extends Character {
 
-      public boolean collided;
-
       public PlayerBullet(Vector2 pos, Character c) {
 
             super(pos, "character\\ball.png");
