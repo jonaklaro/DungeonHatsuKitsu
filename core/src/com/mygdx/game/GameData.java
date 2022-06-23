@@ -11,6 +11,7 @@ public class GameData implements Serializable {
 
       public int[] health;
       public Vector2[] pos;
+      int highscore;
 
       public void loadInfo() {
             ArrayList<Player> players = GameScreen.players;
@@ -35,6 +36,36 @@ public class GameData implements Serializable {
                   players.get(i).setHealth(gameData.health[i]);
                   players.get(i).setPosition(gameData.pos[i]);
             }
+      }
+
+      // add highscore to file
+      public void addHighscore(int score) {
+            highscore = score;
+            try {
+                  FileOutputStream fileOut = new FileOutputStream("highscore.txt");
+                  ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                  out.writeObject(highscore);
+                  out.close();
+                  fileOut.close();
+            } catch (IOException i) {
+                  i.printStackTrace();
+            }
+      }
+
+      // read highscore from file
+      public int getHighscore() {
+            try {
+                  FileInputStream fileIn = new FileInputStream("highscore.txt");
+                  ObjectInputStream in = new ObjectInputStream(fileIn);
+                  highscore = (int) in.readObject();
+                  in.close();
+                  fileIn.close();
+            } catch (IOException i) {
+                  i.printStackTrace();
+            } catch (ClassNotFoundException c) {
+                  System.out.println("Class not found");
+            }
+            return highscore;
       }
 
       public void writeGameState() throws IOException {

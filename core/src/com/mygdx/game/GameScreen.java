@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.mygdx.game.entities.Entity;
 import com.mygdx.game.entities.Enemy;
 import com.mygdx.game.entities.EnemyBullet;
@@ -27,6 +27,10 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
       // static instance of the game screen
       public static GameScreen instance;
+
+      public float score;
+      int finalScore;
+      float playtime;
 
       // Imports
       SpriteBatch batch;
@@ -44,7 +48,8 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             READY,
             RUNNING,
             PAUSED,
-            OVER
+            WON,
+            LOST
       }
 
       int[][] hidden;
@@ -77,6 +82,8 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             this.game = game;
 
             state = State.READY;
+            score = 0;
+            playtime = 0;
             batch = new SpriteBatch();
             mapp = new Map();
             Map.load();
@@ -111,7 +118,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             titleSprite = new Sprite(titleTexture);
             titleSprite.scale(8);
             titleSprite.setPosition(camera.position.x + titleSprite.getWidth() / 2,
-                        -camera.position.y / 2 - titleSprite.getHeight() / 2);
+                        -camera.position.y / 3 - titleSprite.getHeight() / 2);
 
             gameData = new GameData();
 
@@ -121,19 +128,21 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
       }
 
+      // update the game screen
       @Override
       public void render(float delta) {
             update(delta);
             draw();
       }
 
+      // all the update stuff
       public void update(float deltaTime) {
             if (deltaTime > 0.1f)
                   deltaTime = 0.1f;
 
             switch (state) {
                   case READY:
-                        updateReady();
+                        updateReady(deltaTime);
                         break;
                   case RUNNING:
                         updateRunning(deltaTime);
@@ -141,29 +150,36 @@ public class GameScreen extends ScreenAdapter implements Serializable {
                   case PAUSED:
                         updatePaused(deltaTime);
                         break;
-                  case OVER:
-                        game.setScreen(new MenuScreen(game));
-                        // state = State.READY;
-            }
-      }
-
-      public void draw() {
-            switch (state) {
-                  case READY:
-                        drawReady();
+                  case WON:
+                        updateEnd(deltaTime);
                         break;
-                  case RUNNING:
-                        drawRunning();
-                        break;
-                  case PAUSED:
-                        drawPaused();
-                        break;
-                  default:
+                  case LOST:
+                        updateEnd(deltaTime);
                         break;
             }
       }
 
-      private void updateReady() {
+      private void updateEnd(float deltaTime) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
+                  game.setScreen(new WinningScreen(game));
+
+            if (state == State.WON) {
+                  updateHighscore();
+            }
+      }
+
+      private void updateHighscore() {
+            finalScore = (int) ((playtime * 10) - score);
+
+            if (gameData.getHighscore() > finalScore) {
+                  gameData.addHighscore((int) finalScore);
+            }
+            if (gameData.getHighscore() == 0) {
+                  gameData.addHighscore((int) finalScore);
+            }
+      }
+
+      private void updateReady(float deltaTime) {
             InputController inputController_p1 = new InputController(
                         Input.Keys.A,
                         Input.Keys.D,
@@ -193,6 +209,8 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             }
             collisionController = new CollisionController();
 
+            moveTitleSprite(deltaTime);
+
       }
 
       public void updatePaused(float delta) {
@@ -203,6 +221,12 @@ public class GameScreen extends ScreenAdapter implements Serializable {
       }
 
       public void updateRunning(float delta) {
+            // count the playtime up
+            playtime += delta;
+
+            if (Gdx.input.isKeyPressed(Input.Keys.I)) {
+                  state = State.WON;
+            }
             if (Gdx.input.justTouched()) {
                   state = State.PAUSED;
                   return;
@@ -256,9 +280,72 @@ public class GameScreen extends ScreenAdapter implements Serializable {
                         break;
             }
 
-            if (players.isEmpty() || enemies.isEmpty())
-                  state = State.OVER;
+            if (players.isEmpty())
+                  state = State.LOST;
 
+            if (enemies.isEmpty()) {
+                  state = State.WON;
+            }
+
+      }
+
+      // all the draw stuff
+      public void draw() {
+            switch (state) {
+                  case READY:
+                        drawReady();
+                        break;
+                  case RUNNING:
+                        drawRunning();
+                        break;
+                  case PAUSED:
+                        drawPaused();
+                        break;
+                  case WON:
+                        drawWon();
+                        break;
+                  case LOST:
+                        drawLost();
+                        break;
+            }
+      }
+
+      private void drawWon() {
+            batch.begin();
+            backgroundSprite.setColor(Color.GREEN);
+            backgroundSprite.draw(batch);
+            GameUI.drawText(batch, "Level abgeschlossen!", camera.position.x,
+                        camera.position.y + 150);
+            GameUI.drawText(batch, "Deine Score-Time ist: " + finalScore, camera.position.x,
+                        camera.position.y + 100);
+            GameUI.drawText(batch, "Die schnellste Score-Time ist: " + gameData.getHighscore(), camera.position.x,
+                        camera.position.y + 50);
+            drawEnd();
+      }
+
+      private void drawLost() {
+            batch.begin();
+            backgroundSprite.setColor(Color.RED);
+            backgroundSprite.draw(batch);
+            GameUI.drawText(batch, "Game over!", camera.position.x,
+                        camera.position.y + 150);
+            drawEnd();
+      }
+
+      private void drawEnd() {
+            GameUI.drawText(batch, "Um zum Hauptmenü zu gelangen,", camera.position.x,
+                        camera.position.y - 50);
+            GameUI.drawText(batch, "drücke Enter.", camera.position.x, camera.position.y - 100);
+            batch.end();
+      }
+
+      private void drawReady() {
+            batch.begin();
+
+            backgroundSprite.draw(batch);
+            titleSprite.draw(batch);
+
+            batch.end();
       }
 
       private void drawPaused() {
@@ -352,15 +439,6 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             return new Vector2(x, y);
       }
 
-      private void drawReady() {
-            batch.begin();
-
-            backgroundSprite.draw(batch);
-            titleSprite.draw(batch);
-
-            batch.end();
-      }
-
       @Override
       public void resize(int width, int height) {
             camera.viewportWidth = width;
@@ -376,6 +454,26 @@ public class GameScreen extends ScreenAdapter implements Serializable {
       @Override
       public void hide() {
             super.hide();
+      }
+
+      int direction = 1;
+
+      private void moveTitleSprite(float delta) {
+
+            // smooth shake of title sprite in the middle of the screen
+            if (titleSprite.getX() < camera.viewportWidth / 2 && direction == 1) {
+                  titleSprite.setX(titleSprite.getX() + delta * titleSprite.getWidth() / 2);
+                  if (titleSprite.getX() > camera.viewportWidth / 2) {
+                        direction = -1;
+
+                  }
+            }
+            if (titleSprite.getX() + titleSprite.getWidth() > camera.viewportWidth / 2 && direction == -1) {
+                  titleSprite.setX(titleSprite.getX() - delta * titleSprite.getWidth() / 2);
+                  if (titleSprite.getX() + titleSprite.getWidth() < camera.viewportWidth / 2) {
+                        direction = 1;
+                  }
+            }
       }
 
       public void saveGameState() {

@@ -29,6 +29,7 @@ public class RoundStinger extends Enemy {
       @Override
       public void dropLoot() {
             gameScreen.loot.add(new LootCredits(new Vector2(getMidX(), getMidY())));
+            gameScreen.score += 10;
       }
 
       // onCollide

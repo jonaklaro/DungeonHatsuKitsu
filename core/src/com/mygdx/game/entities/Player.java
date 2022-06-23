@@ -33,7 +33,7 @@ public class Player extends Character {
             kb = KeyBlock.NO_BLOCK;
             health = 10;
             maxHealth = 10;
-            invulnerableTime = 2f;
+            invulnerableTime = 1f;
             invulnerableTimeMax = invulnerableTime;
             sprite.setScale(.5f, 1);
             sprite.setRegion(10, 3, 34, 61);

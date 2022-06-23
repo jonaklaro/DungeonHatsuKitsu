@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -46,6 +47,9 @@ public class GameUI extends Sprite {
 
       static void drawText(SpriteBatch batch, String text, float x, float y) {
             font.setUseIntegerPositions(false);
-            font.draw(batch, text, x, y);
+            GlyphLayout layout = new GlyphLayout(font, text);
+            // draw Text centered on screen
+            font.draw(batch, text, x - layout.width / 2, y);
+
       }
 }

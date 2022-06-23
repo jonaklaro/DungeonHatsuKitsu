@@ -36,6 +36,7 @@ public class Pegpeg extends Enemy {
       public void dropLoot() {
             super.dropLoot();
             gameScreen.loot.add(new LootHealth(new Vector2(getMidX(), getMidY())));
+            gameScreen.score += 20;
       }
 
       // the enemy should shoot at the player when in range
