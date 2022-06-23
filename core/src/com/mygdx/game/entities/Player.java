@@ -109,7 +109,7 @@ public class Player extends Character {
       @Override
       public void onCollide(Entity collidingObject) {
             if (collidingObject instanceof Enemy) {
-                  // if coll with bottom, set pos grav (like little jump) and set jump count to 0
+                  // if coll with enemy set grav to 10 and set jump count to 0
                   // for jumping again
                   if (gravity < 0) { // Down
                         gravity = 10;
@@ -170,7 +170,7 @@ public class Player extends Character {
 
             updateinvulnerableTime();
 
-            entityUpdate(delta, gameScreen.players);
+            entityUpdate(delta);
       }
 
       // a function to update the player's bullets

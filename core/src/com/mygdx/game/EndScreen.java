@@ -10,16 +10,19 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class WinningScreen extends ScreenAdapter {
+public class EndScreen extends ScreenAdapter {
 
       SpriteBatch batch;
       Texture img;
       private Sprite sprite;
       OrthographicCamera camera;
       Game game;
+      GameScreen gameScreen;
 
-      public WinningScreen(Game game) {
+      public EndScreen(Game game) {
             this.game = game;
+            gameScreen = GameScreen.getInstance();
+
             batch = new SpriteBatch();
             img = new Texture("Menu.png");
             sprite = new Sprite(img);

@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.mygdx.game.entities.Entity;
 import com.mygdx.game.entities.Enemy;
 import com.mygdx.game.entities.EnemyBullet;
@@ -66,8 +65,8 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
       public static float opacity = 1;
 
-      public static ArrayList<Enemy> enemies;
-      public static ArrayList<Player> players;
+      public ArrayList<Enemy> enemies;
+      public ArrayList<Player> players;
       public ArrayList<Loot> loot;
       public ArrayList<PlayerBullet> playerBullets;
       public ArrayList<EnemyBullet> enemyBullets;
@@ -120,10 +119,9 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             titleSprite.setPosition(camera.position.x + titleSprite.getWidth() / 2,
                         -camera.position.y / 3 - titleSprite.getHeight() / 2);
 
-            gameData = new GameData();
-
             // set instance of the game screen
             instance = this;
+            gameData = new GameData();
             enemies = mapp.getEnemies("assets/maps/level1_enemies.csv", enemies);
 
       }
@@ -161,7 +159,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
       private void updateEnd(float deltaTime) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
-                  game.setScreen(new WinningScreen(game));
+                  game.setScreen(new EndScreen(game));
 
             if (state == State.WON) {
                   updateHighscore();
@@ -192,7 +190,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
                         Input.Keys.UP,
                         Input.Keys.DOWN);
 
-            if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
+            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                   multi = false;
                   state = State.RUNNING;
                   players.add(new Player(mapp.getPlayer("assets/maps/level1_entities.csv"), false,
@@ -224,9 +222,6 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             // count the playtime up
             playtime += delta;
 
-            if (Gdx.input.isKeyPressed(Input.Keys.I)) {
-                  state = State.WON;
-            }
             if (Gdx.input.justTouched()) {
                   state = State.PAUSED;
                   return;
@@ -460,20 +455,28 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
       private void moveTitleSprite(float delta) {
 
-            // smooth shake of title sprite in the middle of the screen
-            if (titleSprite.getX() < camera.viewportWidth / 2 && direction == 1) {
-                  titleSprite.setX(titleSprite.getX() + delta * titleSprite.getWidth() / 2);
-                  if (titleSprite.getX() > camera.viewportWidth / 2) {
-                        direction = -1;
+            // // smooth shake of title sprite in the middle of the screen
+            // if (titleSprite.getX() < camera.viewportWidth / 2 && direction == 1) {
+            // titleSprite.setX(titleSprite.getX() + delta * titleSprite.getWidth() / 2);
+            // if (titleSprite.getX() > camera.viewportWidth / 2) {
+            // direction = -1;
 
-                  }
-            }
-            if (titleSprite.getX() + titleSprite.getWidth() > camera.viewportWidth / 2 && direction == -1) {
-                  titleSprite.setX(titleSprite.getX() - delta * titleSprite.getWidth() / 2);
-                  if (titleSprite.getX() + titleSprite.getWidth() < camera.viewportWidth / 2) {
-                        direction = 1;
-                  }
-            }
+            // }
+            // }
+            // if (titleSprite.getX() + titleSprite.getWidth() > camera.viewportWidth / 2 &&
+            // direction == -1) {
+            // titleSprite.setX(titleSprite.getX() - delta * titleSprite.getWidth() / 2);
+            // if (titleSprite.getX() + titleSprite.getWidth() < camera.viewportWidth / 2) {
+            // direction = 1;
+            // }
+            // }
+
+            // get Mouse position
+            Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+            // offset tileSprite with mousePos
+            titleSprite.setPosition(mousePos.x - titleSprite.getWidth() / 2,
+                        -mousePos.y + (titleSprite.getHeight() * 5));
+
       }
 
       public void saveGameState() {

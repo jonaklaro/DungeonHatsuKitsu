@@ -12,9 +12,10 @@ public class GameData implements Serializable {
       public int[] health;
       public Vector2[] pos;
       int highscore;
+      GameScreen gameScreen = GameScreen.getInstance();
 
       public void loadInfo() {
-            ArrayList<Player> players = GameScreen.players;
+            ArrayList<Player> players = gameScreen.players;
             if (players.isEmpty())
                   return;
 
@@ -70,14 +71,14 @@ public class GameData implements Serializable {
 
       public void writeGameState() throws IOException {
             FileOutputStream fos;
-            if (GameScreen.players.size() == 1) {
+            if (gameScreen.players.size() == 1) {
                   fos = new FileOutputStream("save.txt");
                   ObjectOutputStream oos = new ObjectOutputStream(fos);
                   oos.writeObject(gameData);
                   oos.close();
                   fos.close();
             }
-            if (GameScreen.players.size() == 2) {
+            if (gameScreen.players.size() == 2) {
                   fos = new FileOutputStream("save2.txt");
                   ObjectOutputStream oos = new ObjectOutputStream(fos);
                   oos.writeObject(gameData);
@@ -90,14 +91,14 @@ public class GameData implements Serializable {
 
       // a function to load the game state
       void loadGameState() throws IOException, ClassNotFoundException {
-            if (GameScreen.players.size() == 1) {
+            if (gameScreen.players.size() == 1) {
                   FileInputStream fis = new FileInputStream("save.txt");
                   ObjectInputStream ois = new ObjectInputStream(fis);
                   gameData = (GameData) ois.readObject();
                   ois.close();
                   fis.close();
             }
-            if (GameScreen.players.size() == 2) {
+            if (gameScreen.players.size() == 2) {
                   FileInputStream fis = new FileInputStream("save2.txt");
                   ObjectInputStream ois = new ObjectInputStream(fis);
                   gameData = (GameData) ois.readObject();

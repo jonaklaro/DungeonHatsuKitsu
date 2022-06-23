@@ -1,8 +1,5 @@
 package com.mygdx.game.entities.loot;
 
-import java.io.IOException;
-
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameData;

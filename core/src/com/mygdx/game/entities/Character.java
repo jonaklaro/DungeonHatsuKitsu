@@ -69,7 +69,7 @@ public class Character extends Entity {
       }
 
       // general update method for characters
-      public void entityUpdate(float delta, ArrayList characters) {
+      public void entityUpdate(float delta) {
             move(delta);
             // moveAttack(delta);
             drawHurt();

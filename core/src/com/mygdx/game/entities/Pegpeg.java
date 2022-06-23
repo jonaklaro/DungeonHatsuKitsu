@@ -6,8 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entities.loot.LootHealth;
 
-import java.util.ArrayList;
-
 public class Pegpeg extends Enemy {
 
       GameScreen gameScreen;
@@ -42,7 +40,7 @@ public class Pegpeg extends Enemy {
       // the enemy should shoot at the player when in range
       @Override
       void searchPlayer() {
-            for (Player p : GameScreen.players) {
+            for (Player p : gameScreen.players) {
                   float dist = GameScreen.getDistance(p.getMidPosition(), this.getMidPosition());
                   if (dist < range) {
                         // a function to determine which direction the enemy should head in
@@ -65,10 +63,7 @@ public class Pegpeg extends Enemy {
       // a function to make the enemy shoot
       @Override
       void shoot() {
-            // attack();
-            // if (gameScreen.enemyBullets.size() < 1) {
             gameScreen = GameScreen.getInstance();
             gameScreen.enemyBullets.add(new EnemyBullet(getPosition(), this));
-            // }
       }
 }

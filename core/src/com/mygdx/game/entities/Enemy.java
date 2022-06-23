@@ -27,7 +27,7 @@ public class Enemy extends Character {
 
       public void update(float delta) {
             searchPlayer();
-            entityUpdate(delta, GameScreen.enemies);
+            entityUpdate(delta);
             flipCharacter();
       }
 
