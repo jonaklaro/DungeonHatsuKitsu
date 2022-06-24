@@ -45,7 +45,7 @@ public class GameUI extends Sprite {
             setSprite.draw(batch);
       }
 
-      static void drawText(SpriteBatch batch, String text, float x, float y) {
+      public static void drawText(SpriteBatch batch, String text, float x, float y) {
             font.setUseIntegerPositions(false);
             GlyphLayout layout = new GlyphLayout(font, text);
             // draw Text centered on screen

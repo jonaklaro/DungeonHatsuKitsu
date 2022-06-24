@@ -180,19 +180,16 @@ public class Entity implements Serializable {
                                     }
                               }
 
-                              // Collision detection for the hidden recs and Loot
-                              if (this.getClass() == Player.class) {
-                                    ((Player) this).hiddenColDet();
-                                    // ((Player) this).lootColDet();
-                              }
-
                               return true;
                         }
                   }
             }
 
-            if (this.getClass() == Player.class)
+            if (this.getClass() == Player.class) {
+                  // Collision detection for the hidden recs
+                  ((Player) this).hiddenColDet();
                   ((Player) this).collided = false;
+            }
 
             return false;
       }

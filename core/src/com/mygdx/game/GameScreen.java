@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.entities.Entity;
+import com.mygdx.game.entities.Exit;
 import com.mygdx.game.entities.Enemy;
 import com.mygdx.game.entities.EnemyBullet;
 import com.mygdx.game.entities.Player;
@@ -32,10 +33,10 @@ public class GameScreen extends ScreenAdapter implements Serializable {
       float playtime;
 
       // Imports
-      SpriteBatch batch;
+      public SpriteBatch batch;
       Texture background;
       Sprite backgroundSprite;
-      OrthographicCamera camera;
+      public OrthographicCamera camera;
       public static float zoom;
       public static int minDist;
       public static int distFactor;
@@ -70,6 +71,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
       public ArrayList<Loot> loot;
       public ArrayList<PlayerBullet> playerBullets;
       public ArrayList<EnemyBullet> enemyBullets;
+      public Exit exit;
 
       Texture titleTexture;
       Sprite titleSprite;
@@ -95,7 +97,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
             batch = new SpriteBatch();
             mapp = new Map();
-            mapp.load();
+            mapp.load("level1");
 
             shapeRenderer = new ShapeRenderer();
             camera = new OrthographicCamera();
@@ -244,6 +246,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
                   if (p.getHealth() <= 0) {
                         players.remove(p);
+                        camera.zoom = (float) minDist / distFactor * 2;
                         break;
                   }
 
@@ -279,10 +282,6 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
             if (players.isEmpty())
                   state = State.LOST;
-
-            if (enemies.isEmpty()) {
-                  state = State.WON;
-            }
 
       }
 
@@ -370,6 +369,8 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
             camera.update();
 
+            exit.render(batch, camera);
+
             for (Player p : players) {
                   p.render(batch, camera);
 
@@ -404,6 +405,15 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
             for (Player p : players) {
                   GameUI.drawText(batch, "Health: " + p.getHealth(), p.getMidPosition().x, p.getMidPosition().y);
+            }
+            if (exit.collided && !enemies.isEmpty()) {
+                  GameUI.drawText(batch, "You must kill all enemies",
+                              camera.position.x,
+                              camera.position.y - 100);
+                  GameUI.drawText(batch, "before you can exit.",
+                              camera.position.x,
+                              camera.position.y - 150);
+                  exit.collided = false;
             }
 
             backgroundSprite.setPosition((float) (getCameraPos().x / 1.5) - 2 * tilesize * graphicScale,
@@ -456,22 +466,6 @@ public class GameScreen extends ScreenAdapter implements Serializable {
       int direction = 1;
 
       private void moveTitleSprite(float delta) {
-
-            // // smooth shake of title sprite in the middle of the screen
-            // if (titleSprite.getX() < camera.viewportWidth / 2 && direction == 1) {
-            // titleSprite.setX(titleSprite.getX() + delta * titleSprite.getWidth() / 2);
-            // if (titleSprite.getX() > camera.viewportWidth / 2) {
-            // direction = -1;
-
-            // }
-            // }
-            // if (titleSprite.getX() + titleSprite.getWidth() > camera.viewportWidth / 2 &&
-            // direction == -1) {
-            // titleSprite.setX(titleSprite.getX() - delta * titleSprite.getWidth() / 2);
-            // if (titleSprite.getX() + titleSprite.getWidth() < camera.viewportWidth / 2) {
-            // direction = 1;
-            // }
-            // }
 
             // get Mouse position
             Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
@@ -528,10 +522,15 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             for (EnemyBullet b : enemyBullets) {
                   entities.add((Entity) b);
             }
+            entities.add(exit);
             return entities;
       }
 
       public State getState() {
             return state;
+      }
+
+      public void setState(State state) {
+            this.state = state;
       }
 }

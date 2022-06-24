@@ -16,10 +16,10 @@ public class RoundStinger extends Enemy {
             hitRect = new Rectangle(pos.x, pos.y, 32 * playerScale, 32 * playerScale);
             setHealth(10);
             damage = 2;
-            speed = 100;
+            speed = 250;
             maxSpeed = speed;
             range = 400;
-            reactionTime = 2;
+            reactionTime = 1;
             reactionTimeMax = reactionTime;
             gameScreen = GameScreen.getInstance();
       }
@@ -27,7 +27,9 @@ public class RoundStinger extends Enemy {
       // a function to drop loot
       @Override
       public void dropLoot() {
-            gameScreen.loot.add(new LootCredits(new Vector2(getMidX(), getMidY())));
+            // get a random number between -1 and 1
+            int random = (int) (Math.random() * 3) - 1;
+            gameScreen.loot.add(new LootCredits(new Vector2(getMidX() + random * 10, getMidY())));
             gameScreen.score += 10;
       }
 

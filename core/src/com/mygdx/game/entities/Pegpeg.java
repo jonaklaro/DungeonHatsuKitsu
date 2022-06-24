@@ -33,7 +33,11 @@ public class Pegpeg extends Enemy {
       @Override
       public void dropLoot() {
             super.dropLoot();
-            gameScreen.loot.add(new LootHealth(new Vector2(getMidX(), getMidY())));
+            int random;
+            for (int i = 0; i < 2; i++) {
+                  random = (int) (Math.random() * 3) - 1;
+                  gameScreen.loot.add(new LootHealth(new Vector2(getMidX() + random * 10, getMidY())));
+            }
             gameScreen.score += 20;
       }
 

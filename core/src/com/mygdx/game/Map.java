@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.entities.Exit;
 import com.mygdx.game.entities.Pegpeg;
 import com.mygdx.game.entities.RoundStinger;
 
@@ -26,6 +27,7 @@ public class Map extends Sprite {
       static int tilesize = Settings.tilesize;
       static int graphicScale = Settings.graphicScale;
       static Vector2 playerPos = new Vector2();
+      static int[][] exitMap;
 
       // gameScreen
       public static GameScreen gameScreen;
@@ -38,14 +40,32 @@ public class Map extends Sprite {
             gameScreen = GameScreen.getInstance();
       }
 
-      public void load() {
+      public void load(String level) {
             mapp = new int[100][100];
             gameScreen = GameScreen.instance;
-            enemies = readMap("assets/maps/level1_enemies.csv");
-            borders = readMap("assets/maps/level1_borders.csv");
-            hidden = readMap("assets/maps/level1_hidden_obj.csv");
-            mapp = readMap("assets/maps/level1_map.csv");
-            playerPos = getPlayer("assets/maps/level1_entities.csv");
+            enemies = readMap("assets/maps/" + level + "_enemies.csv");
+            borders = readMap("assets/maps/" + level + "_borders.csv");
+            hidden = readMap("assets/maps/" + level + "_hidden_obj.csv");
+            exitMap = readMap("assets/maps/" + level + "_exit.csv");
+            readExit();
+
+            mapp = readMap("assets/maps/" + level + "_map.csv");
+            playerPos = getPlayer("assets/maps/" + level + "_entities.csv");
+      }
+
+      private void readExit() {
+            Vector2 pos;
+            for (int row = 0; row < exitMap.length; row++) {
+
+                  for (int col = 0; col < exitMap[row].length; col++) {
+                        playerX = col * Settings.tilesize * Settings.graphicScale;
+                        playerY = -row * Settings.tilesize * Settings.graphicScale;
+                        pos = new Vector2(playerX, playerY);
+                        if (exitMap[row][col] == 0) {
+                              gameScreen.exit = new Exit(pos, "character/exit.png");
+                        }
+                  }
+            }
       }
 
       public static Vector2 getPlayerPos() {
