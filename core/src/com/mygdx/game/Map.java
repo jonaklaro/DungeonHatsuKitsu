@@ -4,14 +4,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.entities.Enemy;
 import com.mygdx.game.entities.Pegpeg;
 import com.mygdx.game.entities.RoundStinger;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 public class Map extends Sprite {
       static BufferedReader br;
@@ -27,6 +25,7 @@ public class Map extends Sprite {
       public static int[][] enemies;
       static int tilesize = Settings.tilesize;
       static int graphicScale = Settings.graphicScale;
+      static Vector2 playerPos = new Vector2();
 
       // gameScreen
       public static GameScreen gameScreen;
@@ -36,16 +35,21 @@ public class Map extends Sprite {
             spriteMap = new Sprite(tileMap);
             numCol = Settings.numCol;
             numRow = Settings.numRow;
-
+            gameScreen = GameScreen.getInstance();
       }
 
-      public static void load() {
+      public void load() {
             mapp = new int[100][100];
             gameScreen = GameScreen.instance;
             enemies = readMap("assets/maps/level1_enemies.csv");
             borders = readMap("assets/maps/level1_borders.csv");
             hidden = readMap("assets/maps/level1_hidden_obj.csv");
             mapp = readMap("assets/maps/level1_map.csv");
+            playerPos = getPlayer("assets/maps/level1_entities.csv");
+      }
+
+      public static Vector2 getPlayerPos() {
+            return playerPos;
       }
 
       public static int[][] readMap(String path) {
@@ -91,33 +95,25 @@ public class Map extends Sprite {
             return pos;
       }
 
-      public ArrayList<Enemy> getEnemies(String path, ArrayList<Enemy> enemies) {
-            mapp = new int[100][100];
+      public void getEnemies() {
 
             Vector2 pos;
-            try {
-                  br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
-                  for (int row = 0; row < mapp.length; row++) {
-                        String line = br.readLine();
-                        String[] tokens = line.split(",");
 
-                        for (int col = 0; col < mapp[row].length; col++) {
-                              playerX = col * Settings.tilesize * Settings.graphicScale;
-                              playerY = -row * Settings.tilesize * Settings.graphicScale;
-                              pos = new Vector2(playerX, playerY);
-                              if (tokens[col].equals("0")) {
-                                    enemies.add(new Pegpeg(pos));
-                              }
-                              if (tokens[col].equals("1")) {
-                                    enemies.add(new RoundStinger(pos));
-                              }
+            for (int row = 0; row < enemies.length; row++) {
+
+                  for (int col = 0; col < enemies[row].length; col++) {
+                        playerX = col * Settings.tilesize * Settings.graphicScale;
+                        playerY = -row * Settings.tilesize * Settings.graphicScale;
+                        pos = new Vector2(playerX, playerY);
+                        if (enemies[row][col] == 0) {
+                              gameScreen.enemies.add(new Pegpeg(pos));
+                        }
+                        if (enemies[row][col] == 1) {
+                              gameScreen.enemies.add(new RoundStinger(pos));
                         }
                   }
-
-            } catch (Exception e) {
-                  e.printStackTrace();
             }
-            return enemies;
+
       }
 
       public static void drawMap(int[][] map, SpriteBatch batch, float opacity) {

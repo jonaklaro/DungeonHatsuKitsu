@@ -12,9 +12,9 @@ public class GameData implements Serializable {
       public int[] health;
       public Vector2[] pos;
       int highscore;
-      GameScreen gameScreen = GameScreen.getInstance();
 
       public void loadInfo() {
+            GameScreen gameScreen = GameScreen.getInstance();
             ArrayList<Player> players = gameScreen.players;
             if (players.isEmpty())
                   return;
@@ -70,6 +70,7 @@ public class GameData implements Serializable {
       }
 
       public void writeGameState() throws IOException {
+            GameScreen gameScreen = GameScreen.getInstance();
             FileOutputStream fos;
             if (gameScreen.players.size() == 1) {
                   fos = new FileOutputStream("save.txt");
@@ -91,6 +92,7 @@ public class GameData implements Serializable {
 
       // a function to load the game state
       void loadGameState() throws IOException, ClassNotFoundException {
+            GameScreen gameScreen = GameScreen.getInstance();
             if (gameScreen.players.size() == 1) {
                   FileInputStream fis = new FileInputStream("save.txt");
                   ObjectInputStream ois = new ObjectInputStream(fis);

@@ -83,15 +83,9 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             state = State.READY;
             score = 0;
             playtime = 0;
-            batch = new SpriteBatch();
-            mapp = new Map();
-            Map.load();
 
-            shapeRenderer = new ShapeRenderer();
-            camera = new OrthographicCamera();
-
-            map = Map.mapp;
-            hidden = Map.hidden;
+            // set instance of the game screen
+            instance = this;
 
             loot = new ArrayList<>();
             players = new ArrayList<>();
@@ -99,7 +93,17 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             playerBullets = new ArrayList<>();
             enemyBullets = new ArrayList<>();
 
-            camera.position.set(mapp.getPlayer("assets/maps/level1_entities.csv"), 0);
+            batch = new SpriteBatch();
+            mapp = new Map();
+            mapp.load();
+
+            shapeRenderer = new ShapeRenderer();
+            camera = new OrthographicCamera();
+
+            map = Map.mapp;
+            hidden = Map.hidden;
+
+            camera.position.set(Map.getPlayerPos(), 0);
             minDist = 500;
             distFactor = 2000;
 
@@ -119,10 +123,8 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             titleSprite.setPosition(camera.position.x + titleSprite.getWidth() / 2,
                         -camera.position.y / 3 - titleSprite.getHeight() / 2);
 
-            // set instance of the game screen
-            instance = this;
             gameData = new GameData();
-            enemies = mapp.getEnemies("assets/maps/level1_enemies.csv", enemies);
+            mapp.getEnemies();
 
       }
 
@@ -193,15 +195,15 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                   multi = false;
                   state = State.RUNNING;
-                  players.add(new Player(mapp.getPlayer("assets/maps/level1_entities.csv"), false,
+                  players.add(new Player(Map.getPlayerPos(), false,
                               inputController_p1));
             }
 
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                   multi = true;
-                  players.add(new Player(mapp.getPlayer("assets/maps/level1_entities.csv"), false,
+                  players.add(new Player(Map.getPlayerPos(), false,
                               inputController_p1));
-                  players.add(new Player(mapp.getPlayer("assets/maps/level1_entities.csv"), true,
+                  players.add(new Player(Map.getPlayerPos(), true,
                               inputController_p2));
                   state = State.RUNNING;
             }
