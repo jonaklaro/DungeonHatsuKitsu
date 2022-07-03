@@ -55,19 +55,29 @@ public class Entity implements Serializable {
 
       KeyBlock kb;
 
-      // basic Constructor for every entity
+      /**
+       * Constructor for all entities where the sprite is loaded and set to a position
+       * 
+       * @param pos
+       * @param texture
+       */
       public Entity(Vector2 pos, String spriteLink) {
             sprite = createSprite(spriteLink);
             sprite.setPosition(pos.x, pos.y);
       }
 
-      // a render Method
+      /**
+       * A method to render the entity
+       *
+       */
       public void render(SpriteBatch batch, OrthographicCamera camera) {
             batch.setProjectionMatrix(camera.combined);
             sprite.draw(batch);
       }
 
-      // basic Sprite create function
+      /**
+       * A method to create the sprite
+       */
       Sprite createSprite(String link) {
             texture = new Texture(link);
 
@@ -76,12 +86,19 @@ public class Entity implements Serializable {
             return sprite;
       }
 
+      /**
+       * A method get a sprite from a texture by giving a row and a column index
+       * 
+       */
       Sprite getSpriteByPos(int row, int col) {
             int grid = tilesize * 2;
             return new Sprite(texture, col * grid, row * grid, grid, grid);
       }
 
-      // Add rectangles to list (for borders)
+      /**
+       * A method to get all border rectangles from a 2d int arr
+       * 
+       */
       ArrayList<Rectangle> createRectList(int[][] map) {
             ArrayList<Rectangle> recs = new ArrayList<>();
             for (int row = 0; row < map.length; row++) {
@@ -112,11 +129,22 @@ public class Entity implements Serializable {
             this.color = 0;
       }
 
-      // on collide
+      /**
+       * Base method for collisions
+       * 
+       * @param collidingObject
+       */
       public void onCollide(Entity collidingObject) {
       }
 
-      // A method to detect horizontal and vertical collisions
+      /**
+       * A method to detect horizontal and vertical collisions (mostly used for
+       * borders)
+       * 
+       * @param dir - the direction of the collision
+       * 
+       * @return - true if there is a collision, false if not
+       */
       public boolean collision(String dir) {
             // horizontal detection
             if (dir.equals("hor")) {
@@ -194,19 +222,26 @@ public class Entity implements Serializable {
             return false;
       }
 
+      /**
+       * A method to apply gravity to the entity y coordinate
+       * <p>
+       * This method is called every frame, after the entity hit box has been moved
+       * the collision gets checked
+       */
       public void applyGravity(float delta) {
             gravity -= gravSpeed * delta;
             hitRect.y += gravity;
             collision("ver");
       }
 
+      /**
+       * A method to set the sprite position to the hit box position. MidX and MidY
+       * are getting updated
+       */
       public void updateSprite() {
-            // set Sprite pos to calculated pos and set midX and midY
             sprite.setPosition(hitRect.x, hitRect.y);
             midX = hitRect.x + hitRect.width / 2;
             midY = hitRect.y + hitRect.height / 2;
-            // setMidX(sprite.getX()+(sprite.getWidth()*playerScale/2));
-            // setMidY(sprite.getY()+(sprite.getHeight()*playerScale/2));
       }
 
       public Vector2 getPosition() {

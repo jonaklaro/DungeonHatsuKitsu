@@ -23,6 +23,14 @@ public class Player extends Character {
       float invulnerableTimeMax;
       ArrayList<PlayerBullet> bullets;
 
+      /**
+       * Erstellt Spieler Sprite und Hitbox
+       * 
+       * @param pos             Position des Spielers
+       * @param multi           Unterscheidet zwischen Spieler 1 und 2
+       * @param inputController Key Mapping des Spielers
+       *
+       */
       public Player(Vector2 pos, boolean multi, InputController input) {
             super(pos, "character/char_small.png");
             gameScreen = GameScreen.getInstance();
@@ -41,7 +49,12 @@ public class Player extends Character {
             bullets = new ArrayList<>();
       }
 
-      // a function to handle the player's input
+      /**
+       * Input Funktion des Spielers in der die direction gesetzt wird
+       * 
+       * @param attacked  Wenn der Spieler Angreift
+       * @param direction für die Richtung des Spielers
+       */
       public void input() {
             direction.set(0, 0);
             if (!this.inputController.isAttacking())
@@ -83,7 +96,9 @@ public class Player extends Character {
 
       }
 
-      // a function to create the attack
+      /**
+       * Erstellt eine neue Bullet für den Spieler
+       */
       void attack() {
             attacked = true;
             if (bullets.size() < 3) {
@@ -93,7 +108,11 @@ public class Player extends Character {
             }
       }
 
-      // a function to let the player do wall jumps
+      /**
+       * Lässt den Spieler Walljumps machen
+       * 
+       * @param boost directional Boost für den Walljump
+       */
       public void wallJump(boolean boost) {
 
             boolean dir;
@@ -106,6 +125,12 @@ public class Player extends Character {
             }
       }
 
+      /**
+       * Collision mit anderen Objekten
+       * 
+       * @param collidingObject Objekt mit dem der Spieler kollidiert
+       *
+       */
       @Override
       public void onCollide(Entity collidingObject) {
             if (collidingObject instanceof Enemy) {
@@ -142,7 +167,12 @@ public class Player extends Character {
 
       }
 
-      // a function to uptdate the player's health
+      /**
+       * Wenn nicht grade invulnerable, wird dem Spieler Schaden zugefügt
+       * 
+       * @param damage Schaden der dem Spieler zugefügt wird
+       *
+       */
       public void updateHealth(int damage) {
             if (!invulnerable) {
                   health -= damage;

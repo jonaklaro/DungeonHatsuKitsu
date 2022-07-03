@@ -79,6 +79,18 @@ public class GameScreen extends ScreenAdapter implements Serializable {
       GameData gameData;
       CollisionController collisionController;
 
+      /**
+       * <h4>
+       * GameScreen Constructor to initialize the game. <br>
+       * Score and Playtime are set to 0.
+       * <p>
+       * All entities are initialized.
+       * <p>
+       * Batch and Map are initialized
+       * <p>
+       *
+       * @param game the game instance
+       */
       public GameScreen(Game game) {
             this.game = game;
 
@@ -130,14 +142,22 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
       }
 
-      // update the game screen
+      /**
+       * <h4>Update and render the game.
+       * 
+       * @param delta delta time
+       */
       @Override
       public void render(float delta) {
             update(delta);
             draw();
       }
 
-      // all the update stuff
+      /**
+       * <h4>Update the different GameStates with the Enum state.
+       * 
+       * @param deltaTime
+       */
       public void update(float deltaTime) {
             if (deltaTime > 0.1f)
                   deltaTime = 0.1f;
@@ -161,15 +181,30 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             }
       }
 
+      /**
+       * <h4>Update the GameState LOST and WON.</h4>
+       * If Enter is pressed, the game is reset.
+       * <p>
+       * 
+       * If state is WON, the highscore gets updated
+       * 
+       * @param deltaTime
+       */
       private void updateEnd(float deltaTime) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
-                  game.setScreen(new EndScreen(game));
+                  game.setScreen(new GameScreen(game));
 
             if (state == State.WON) {
                   updateHighscore();
             }
       }
 
+      /**
+       * <h4>Update the Highscore.</h4>
+       * If the score is lower than the highscore, the highscore is set to the score.
+       * <p>
+       * If the highscore is 0 (not set), the highscore is set to the score.
+       */
       private void updateHighscore() {
             finalScore = (int) ((playtime * 10) - score);
 
@@ -181,6 +216,15 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             }
       }
 
+      /**
+       * <h4>Update the GameState READY.</h4>
+       * If the left Mouse button is pressed, the single player mode is activated.
+       * <p>
+       * 
+       * If M is pressed, the multiplayer mode is activated.
+       * 
+       * @param deltaTime
+       */
       private void updateReady(float deltaTime) {
             InputController inputController_p1 = new InputController(
                         Input.Keys.A,
@@ -201,7 +245,7 @@ public class GameScreen extends ScreenAdapter implements Serializable {
                               inputController_p1));
             }
 
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.M)) {
                   multi = true;
                   players.add(new Player(Map.getPlayerPos(), false,
                               inputController_p1));
@@ -215,6 +259,12 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
       }
 
+      /**
+       * <h4>Update the GameState PAUSED.</h4>
+       * If the Mouse button is pressed, the game is resumed.
+       * 
+       * @param delta
+       */
       public void updatePaused(float delta) {
             if (Gdx.input.justTouched()) {
                   state = State.RUNNING;
@@ -222,6 +272,21 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
       }
 
+      /**
+       * <h4>Update the GameState RUNNING.</h4>
+       * Playtime gets count up.
+       * <p>
+       * If the mouse button is pressed, the game is paused
+       * <p>
+       * CollisionController is called to check for collisions.
+       * <p>
+       * update all entities.
+       * <p>
+       * If the player is dead, the game is lost.
+       * <p>
+       * 
+       * @param delta
+       */
       public void updateRunning(float delta) {
             // count the playtime up
             playtime += delta;
@@ -285,7 +350,9 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
       }
 
-      // all the draw stuff
+      /**
+       * <h4>Draw the different GameStates with the Enum state.</h4>
+       */
       public void draw() {
             switch (state) {
                   case READY:
@@ -306,6 +373,15 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             }
       }
 
+      /**
+       * <h4>Draw the GameState WON.</h4>
+       * Tint the screen green.
+       * <p>
+       * Write the final score and the highscore.
+       * <p>
+       * Call drawEnd().
+       * <p>
+       */
       private void drawWon() {
             batch.begin();
             backgroundSprite.setColor(Color.GREEN);
@@ -319,6 +395,15 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             drawEnd();
       }
 
+      /**
+       * <h4>Draw the GameState LOST.</h4>
+       * Tint the screen red.
+       * <p>
+       * Write Game Over
+       * <p>
+       * Call drawEnd().
+       * <p>
+       */
       private void drawLost() {
             batch.begin();
             backgroundSprite.setColor(Color.RED);
@@ -328,6 +413,9 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             drawEnd();
       }
 
+      /**
+       * Instructions to get to the Home Screen.
+       */
       private void drawEnd() {
             GameUI.drawText(batch, "Um zum Hauptmenü zu gelangen,", camera.position.x,
                         camera.position.y - 50);
@@ -335,15 +423,35 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             batch.end();
       }
 
+      /**
+       * <h4>Draw the GameState READY.</h4>
+       * Draw a Background and the Title.
+       */
       private void drawReady() {
+            camera.position.set(Map.playerPos, 0);
+
+            camera.update();
+
             batch.begin();
 
             backgroundSprite.draw(batch);
+
+            GameUI.drawText(batch, "Drücke die linke Maustaste für Single-,", camera.position.x + 50,
+                        camera.position.y + 1250);
+            GameUI.drawText(batch, "oder die M-Taste für Multiplayer.", camera.position.x + 50,
+                        camera.position.y + 1200);
+
             titleSprite.draw(batch);
 
             batch.end();
       }
 
+      /**
+       * <h4>Draw the GameState PAUSED.</h4>
+       * Overlay a dark gray rectangle to dim the game.
+       * <p>
+       * Write "Paused" and "Press to continue"
+       */
       private void drawPaused() {
             drawRunning();
             Gdx.gl.glEnable(GL30.GL_BLEND);
@@ -356,9 +464,18 @@ public class GameScreen extends ScreenAdapter implements Serializable {
 
             batch.begin();
             GameUI.settings(batch, camera);
+            GameUI.drawText(batch, "Paused", camera.position.x, camera.position.y + 50);
+            GameUI.drawText(batch, "Press to continue", camera.position.x, camera.position.y - 50);
             batch.end();
       }
 
+      /**
+       * <h4>Draw the GameState RUNNING.</h4>
+       * Draw the Background and all Entities.
+       * <p>
+       * Draw the HUD.
+       * <p>
+       */
       private void drawRunning() {
             batch.begin();
 
@@ -422,6 +539,14 @@ public class GameScreen extends ScreenAdapter implements Serializable {
             batch.end();
       }
 
+      /**
+       * Get distance between two points.
+       * 
+       * @param pos1
+       * @param pos2
+       * @return distance
+       *
+       */
       public static float getDistance(Vector2 pos1, Vector2 pos2) {
             return (float) Math.sqrt(Math.pow((pos1.x - pos2.x), 2) + Math.pow(pos1.y - pos2.y, 2));
       }

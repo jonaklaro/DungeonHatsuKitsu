@@ -5,6 +5,15 @@ import com.badlogic.gdx.math.Vector2;
 
 public class EnemyBullet extends Character {
 
+      /**
+       * Constructor for all enemy bullets, inherits from Character
+       * <p>
+       * Every enemy bullet has a position, sprite, and hitbox. They can be moved
+       * their direction will be set in the direction the enemy is facing.
+       * 
+       * @param pos
+       * @param c
+       */
       public EnemyBullet(Vector2 pos, Character c) {
 
             super(pos, "enemy\\bullet.png");
@@ -30,6 +39,13 @@ public class EnemyBullet extends Character {
             speed = 500;
       }
 
+      /**
+       * A method to move the enemy bullet and check for colissions with the walls
+       * <p>
+       * if the enemy bullet hits the wall, it will be removed from the game.
+       * 
+       * @param delta
+       */
       public void update(float delta) {
             // if (!gameScreen.playerBullets.isEmpty()) {
             move(delta);

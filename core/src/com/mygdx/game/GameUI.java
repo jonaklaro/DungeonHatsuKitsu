@@ -22,6 +22,11 @@ public class GameUI extends Sprite {
       static Texture gradient;
       static NinePatch healthBar;
 
+      /**
+       * Gets called at the initiation of the game to set up the UI (fonts, colors,
+       * etc.)
+       *
+       */
       public static void setup() {
             fontGenerator = new FreeTypeFontGenerator(
                         Gdx.files.internal("fonts\\8-bit-operator\\8bitOperatorPlus-Regular.ttf"));
@@ -35,6 +40,12 @@ public class GameUI extends Sprite {
             healthBar = new NinePatch(gradient, 0, 0, 0, 0);
       }
 
+      /**
+       * Draws the UI for the Paused Screen
+       *
+       * @param batch
+       * @param camera
+       */
       public static void settings(SpriteBatch batch, Camera cam) {
             float zoom = GameScreen.zoom;
 
@@ -45,6 +56,14 @@ public class GameUI extends Sprite {
             setSprite.draw(batch);
       }
 
+      /**
+       * Draws Text on the screen
+       *
+       * @param batch
+       * @param text
+       * @param x
+       * @param y
+       */
       public static void drawText(SpriteBatch batch, String text, float x, float y) {
             font.setUseIntegerPositions(false);
             GlyphLayout layout = new GlyphLayout(font, text);

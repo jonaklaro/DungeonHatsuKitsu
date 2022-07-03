@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,7 +10,6 @@ import com.mygdx.game.entities.Pegpeg;
 import com.mygdx.game.entities.RoundStinger;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
 public class Map extends Sprite {
@@ -32,6 +32,11 @@ public class Map extends Sprite {
       // gameScreen
       public static GameScreen gameScreen;
 
+      /**
+       * Constructor for Map
+       * <p>
+       * Loads SpriteMap and sets up the map parameters
+       */
       public Map() {
             tileMap = new Texture("forrest.png");
             spriteMap = new Sprite(tileMap);
@@ -40,19 +45,28 @@ public class Map extends Sprite {
             gameScreen = GameScreen.getInstance();
       }
 
+      /**
+       * Loads all Map data from a text files
+       * 
+       * @param level the level to load
+       *
+       */
       public void load(String level) {
             mapp = new int[100][100];
             gameScreen = GameScreen.instance;
-            enemies = readMap("assets/maps/" + level + "_enemies.csv");
-            borders = readMap("assets/maps/" + level + "_borders.csv");
-            hidden = readMap("assets/maps/" + level + "_hidden_obj.csv");
-            exitMap = readMap("assets/maps/" + level + "_exit.csv");
+            enemies = readMap("maps/" + level + "_enemies.csv");
+            borders = readMap("maps/" + level + "_borders.csv");
+            hidden = readMap("maps/" + level + "_hidden_obj.csv");
+            exitMap = readMap("maps/" + level + "_exit.csv");
             readExit();
 
-            mapp = readMap("assets/maps/" + level + "_map.csv");
-            playerPos = getPlayer("assets/maps/" + level + "_entities.csv");
+            mapp = readMap("maps/" + level + "_map.csv");
+            playerPos = getPlayer("maps/" + level + "_entities.csv");
       }
 
+      /**
+       * Writes the Position of the exit to gameScreen.exit (creates new Sprite there)
+       */
       private void readExit() {
             Vector2 pos;
             for (int row = 0; row < exitMap.length; row++) {
@@ -72,10 +86,19 @@ public class Map extends Sprite {
             return playerPos;
       }
 
+      /**
+       * Reads a map from a text file
+       * <p>
+       * Read csv file into BufferReader and parse it into an int[][] array.
+       * After that, the 2D array represents the map and is returned
+       * <p>
+       * 
+       * @param path the name of the file to read
+       */
       public static int[][] readMap(String path) {
             mapp = new int[100][100];
             try {
-                  br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+                  br = new BufferedReader(new InputStreamReader(Gdx.files.internal(path).read()));
                   for (int row = 0; row < mapp.length; row++) {
                         String line = br.readLine();
                         String[] tokens = line.split(",");
@@ -91,11 +114,21 @@ public class Map extends Sprite {
             return mapp;
       }
 
+      /**
+       * Reads the player from a text file
+       * <p>
+       * Read csv file into BufferReader and check for a "0" token (the player)
+       * If found, return the position of the player as a Vector2 (x =
+       * col*tilesize*graphicScale, y = -row*tilesize*graphicScale)
+       * <p>
+       * 
+       * @param path the name of the file to read
+       */
       public Vector2 getPlayer(String path) {
 
             Vector2 pos = null;
             try {
-                  br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+                  br = new BufferedReader(new InputStreamReader(Gdx.files.internal(path).read()));
                   for (int row = 0; row < mapp.length; row++) {
                         String line = br.readLine();
                         String[] tokens = line.split(",");
@@ -115,6 +148,15 @@ public class Map extends Sprite {
             return pos;
       }
 
+      /**
+       * Gets the enemies from the int[][] enemies
+       * <p>
+       * if the enemies[row][col] is 0, create a new Pegpeg at the position earlier
+       * calculated.
+       * if the enemies[row][col] is 1, create a new RoundStinger at the position
+       * earlier calculated.
+       * 
+       */
       public void getEnemies() {
 
             Vector2 pos;
@@ -136,6 +178,14 @@ public class Map extends Sprite {
 
       }
 
+      /**
+       * Draws the map[][] to the screen
+       * <p>
+       * Goes throught every element in the map[][] and draws the corresponding tile
+       * from the tileMap.
+       * Every tile is drawn with an opacity so that the hidden tiles can get see
+       * through.
+       */
       public static void drawMap(int[][] map, SpriteBatch batch, float opacity) {
             spriteMap.setScale((float) graphicScale / numCol, (float) graphicScale / numRow);
             for (int row = 0; row < map.length; row++) {

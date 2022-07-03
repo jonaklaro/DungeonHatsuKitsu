@@ -13,6 +13,12 @@ public class GameData implements Serializable {
       public Vector2[] pos;
       int highscore;
 
+      public GameData() {
+      }
+
+      /**
+       * A method to load the game data
+       */
       public void loadInfo() {
             GameScreen gameScreen = GameScreen.getInstance();
             ArrayList<Player> players = gameScreen.players;
@@ -29,6 +35,9 @@ public class GameData implements Serializable {
 
       }
 
+      /**
+       * A method to write the game data
+       */
       void writeInfo(ArrayList<Player> players) {
             if (players.isEmpty())
                   return;
@@ -39,7 +48,11 @@ public class GameData implements Serializable {
             }
       }
 
-      // add highscore to file
+      /**
+       * A method to save the highscore to a file
+       * 
+       * @param score
+       */
       public void addHighscore(int score) {
             highscore = score;
             try {
@@ -53,7 +66,9 @@ public class GameData implements Serializable {
             }
       }
 
-      // read highscore from file
+      /**
+       * A method to load the highscore from a file
+       */
       public int getHighscore() {
             try {
                   FileInputStream fileIn = new FileInputStream("highscore.txt");
@@ -69,6 +84,9 @@ public class GameData implements Serializable {
             return highscore;
       }
 
+      /**
+       * A method to save the game data to a file
+       */
       public void writeGameState() throws IOException {
             GameScreen gameScreen = GameScreen.getInstance();
             FileOutputStream fos;
@@ -90,7 +108,9 @@ public class GameData implements Serializable {
             System.out.println("Everything saved!");
       }
 
-      // a function to load the game state
+      /**
+       * A method to load the game data from a file
+       */
       void loadGameState() throws IOException, ClassNotFoundException {
             GameScreen gameScreen = GameScreen.getInstance();
             if (gameScreen.players.size() == 1) {

@@ -10,6 +10,14 @@ public class Pegpeg extends Enemy {
 
       GameScreen gameScreen;
 
+      /**
+       * Constructor for the pegpeg enemy
+       * <p>
+       * damage is set to 1, speed is set to 0, range is set to 600, reaction time is
+       * set to 0.2, shootDelay is set to 2, and health is set to 7
+       * 
+       * @param pos The position of the enemy
+       */
       public Pegpeg(Vector2 pos) {
             super(pos);
 
@@ -30,6 +38,14 @@ public class Pegpeg extends Enemy {
             gameScreen = GameScreen.getInstance();
       }
 
+      /**
+       * A method to drop loot when the enemy is killed
+       * <p>
+       * Enemy drops two health items. Both get dropped with a little randomness in
+       * their x coordinate, so that the player can differentiate between them. Also
+       * the player score gets increased by 20
+       * 
+       */
       @Override
       public void dropLoot() {
             super.dropLoot();
@@ -41,7 +57,15 @@ public class Pegpeg extends Enemy {
             gameScreen.score += 20;
       }
 
-      // the enemy should shoot at the player when in range
+      /**
+       * The search function for the pegpeg enemy ( other search function gets
+       * overwritten)
+       * <p>
+       * if distance to player is less than range, the enemy will look at the player
+       * if distance to player is less than half the range, the enemy will shoot at
+       * the player after a delay
+       * </p>
+       */
       @Override
       void searchPlayer() {
             for (Player p : gameScreen.players) {
@@ -64,8 +88,12 @@ public class Pegpeg extends Enemy {
             }
       }
 
-      // a function to make the enemy shoot
-      @Override
+      /**
+       * The shoot function for the pegpeg enemy
+       * <p>
+       * The enemy will shoot a bullet in the direction it is facing
+       * </p>
+       */
       void shoot() {
             gameScreen = GameScreen.getInstance();
             gameScreen.enemyBullets.add(new EnemyBullet(getPosition(), this));

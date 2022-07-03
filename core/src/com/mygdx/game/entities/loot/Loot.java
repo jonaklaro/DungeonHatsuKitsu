@@ -13,6 +13,12 @@ public class Loot extends Entity {
       GameScreen gameScreen;
       GameData gameData;
 
+      /**
+       * Constructor for Loot
+       * 
+       * @param pos        position of loot
+       * @param spriteLink link to sprite
+       */
       public Loot(Vector2 pos, String spriteLink) {
             super(pos, spriteLink);
             width = sprite.getWidth() * playerScale;
@@ -21,11 +27,21 @@ public class Loot extends Entity {
             gameScreen = GameScreen.getInstance();
       }
 
+      /**
+       * Update the loot
+       * 
+       * @param delta time since last update
+       */
       public void update(float delta) {
             applyGravity(delta);
             updateSprite();
       }
 
+      /**
+       * Detect if Player is colliding with loot, if so, give player loot
+       * 
+       * @param collidingObject object that is colliding with loot
+       */
       public void onCollide(Entity collidingObject) {
             if (collidingObject instanceof Player) {
                   ((Player) collidingObject).add(this);

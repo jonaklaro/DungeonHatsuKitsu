@@ -9,6 +9,12 @@ public class RoundStinger extends Enemy {
 
       GameScreen gameScreen;
 
+      /**
+       * Constructor for the round stinger enemy
+       * <p>
+       * damage is set to 2, speed is set to 250, range is set to 400, reaction time
+       * is set to 1 and health is set to 10
+       */
       public RoundStinger(Vector2 pos) {
             super(pos);
             sprite = getSpriteByPos(0, 1);
@@ -24,7 +30,11 @@ public class RoundStinger extends Enemy {
             gameScreen = GameScreen.getInstance();
       }
 
-      // a function to drop loot
+      /**
+       * A method to drop loot when the enemy is killed
+       * <p>
+       * Enemy drops a credit and the player score gets increased by 10
+       */
       @Override
       public void dropLoot() {
             // get a random number between -1 and 1
@@ -33,7 +43,14 @@ public class RoundStinger extends Enemy {
             gameScreen.score += 10;
       }
 
-      // onCollide
+      /**
+       * Collision detection method for the round stinger enemy
+       * <p>
+       * If a playerbullet hits the enemy, the enemy takes damage and the bullet is
+       * set to collided. The enemy Color is set to 0.
+       * If the enemy collides with the player and its direction is not 0, the enemy
+       * gets a knockback and its direction is set to 0.
+       */
       @Override
       public void onCollide(Entity collidingObject) {
 

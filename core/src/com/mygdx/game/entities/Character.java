@@ -33,7 +33,16 @@ public class Character extends Entity {
 
       GameScreen gameScreen;
 
-      // constructor for characters
+      /**
+       * Constructor for Characters
+       * <p>
+       * Characters inherit from Entity and have a position, sprite, and hitbox. They
+       * can be moved and get hurt.
+       * </p>
+       * 
+       * @param pos
+       * @param spriteLink
+       */
       public Character(Vector2 pos, String spriteLink) {
             super(pos, spriteLink);
 
@@ -53,10 +62,14 @@ public class Character extends Entity {
             gameScreen = GameScreen.getInstance();
       }
 
-      // a function to create the attack
-      void attack() {
-      }
-
+      /**
+       * A function to flip the character's sprite
+       * <p>
+       * This function is called every frame. It flips the character's sprite
+       * depending on the direction it is moving.
+       * The parameter flipped is used to determine if the character is flipped
+       * already or not (so that no flickering occurs).
+       */
       void flipCharacter() {
             if (direction.x == -1 && !flipped) {
                   sprite.flip(true, false);
@@ -68,14 +81,26 @@ public class Character extends Entity {
             }
       }
 
-      // general update method for characters
+      /**
+       * A function to update the character's position and drawn health status
+       * 
+       * @param delta
+       */
       public void entityUpdate(float delta) {
             move(delta);
-            // moveAttack(delta);
             drawHurt();
       }
 
-      // a method to move the different axes of the hit box and do colDet
+      /**
+       * A function to move the character
+       * <p>
+       * This function is called every frame. First the x offset is calculated and
+       * then added to the hitbox.
+       * After that the the horizontal border collision is checked.
+       * Then, the gravity is applied and the Sprite gets updated.
+       * 
+       * @param delta
+       */
       void move(float delta) {
             float offset = direction.x * speed * delta;
             hitRect.x += offset;
@@ -88,7 +113,12 @@ public class Character extends Entity {
 
       }
 
-      // if color is lower than 1, slowly count it up and set Sprite color accordingly
+      /**
+       * A function to draw the hurt status of a character
+       * <p>
+       * This function is called every frame. If "color" is lower than 1, slowly count
+       * it up and set Sprite color accordingly
+       */
       public void drawHurt() {
             if (color >= 1) {
                   color = 1;

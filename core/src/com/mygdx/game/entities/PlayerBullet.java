@@ -5,6 +5,12 @@ import com.badlogic.gdx.math.Vector2;
 
 public class PlayerBullet extends Character {
 
+      /**
+       * Constructor for the player bullet
+       * <p>
+       * Every player bullet has a position, sprite, and hitbox. They can be moved.
+       * their direction will be set in the direction the player is facing.
+       */
       public PlayerBullet(Vector2 pos, Character c) {
 
             super(pos, "character\\ball.png");
@@ -30,6 +36,15 @@ public class PlayerBullet extends Character {
             speed = 500;
       }
 
+      /**
+       * A method to move the player bullet and check if it has hit the wall
+       * <p>
+       * The player bullet will move in the direction it is facing. If it hits the
+       * wall, the bullet will be removed from the game.
+       *
+       * @param delta
+       * @param p
+       */
       public void update(float delta, Player p) {
             // if (!gameScreen.playerBullets.isEmpty()) {
             move(delta);
