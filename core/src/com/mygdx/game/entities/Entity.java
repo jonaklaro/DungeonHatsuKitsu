@@ -123,12 +123,6 @@ public class Entity implements Serializable {
             this.health = health;
       }
 
-      // entity health gets subtracted by damage
-      public void receiveDamage(int damage) {
-            this.health -= damage;
-            this.color = 0;
-      }
-
       /**
        * Base method for collisions
        * 

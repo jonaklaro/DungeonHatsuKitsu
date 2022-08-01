@@ -62,6 +62,12 @@ public class Character extends Entity {
             gameScreen = GameScreen.getInstance();
       }
 
+      // entity health gets subtracted by damage
+      public void receiveDamage(int damage) {
+            this.health -= damage;
+            this.color = 0;
+      }
+
       /**
        * A function to flip the character's sprite
        * <p>
