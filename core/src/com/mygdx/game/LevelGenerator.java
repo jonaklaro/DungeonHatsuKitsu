@@ -99,10 +99,10 @@ public class LevelGenerator {
       private void generateExit() {
             // generate random exit location that is not on player location
             exitX = (int) (Math.random() * (width - 2)) + 1;
-            exitY = (int) (Math.random() * (height - 2)) + 1;
+            exitY = (int) (Math.random() * (height - 8)) + 4;
             while (exitX == startX && exitY == startY) {
                   exitX = (int) (Math.random() * (width - 2)) + 1;
-                  exitY = (int) (Math.random() * (height - 4)) + 2;
+                  exitY = (int) (Math.random() * (height - 8)) + 4;
             }
             level.exit.setMap(exitX, exitY, 0);
 
@@ -113,7 +113,7 @@ public class LevelGenerator {
 
             // generate random start position in bounds of level
             startX = (int) (Math.random() * (width - 4)) + 2;
-            startY = (int) (Math.random() * (height - 6)) + 3;
+            startY = (int) (Math.random() * (height - 8)) + 4;
 
             // set start position
             level.entities.setMap(startX, startY, 0);
