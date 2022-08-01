@@ -13,7 +13,7 @@ public class Exit extends Entity {
       public Exit(Vector2 pos, String spriteLink) {
             super(pos, spriteLink);
             gameScreen = GameScreen.getInstance();
-            sprite.scale(1);
+            sprite.scale(.25f);
             hitRect = new Rectangle(pos.x, pos.y, 32 * playerScale, 64 * playerScale);
       }
 

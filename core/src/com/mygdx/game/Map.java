@@ -58,24 +58,26 @@ public class Map extends Sprite {
 
             mapp = new int[100][100];
             gameScreen = GameScreen.instance;
-            enemies = readMap("maps/" + level + "_enemies.csv");
-            
+
+            enemies = levelData.enemies.map;
+            // enemies = readMap("maps/" + level + "_enemies.csv");
+
             // borders = readMap("maps/" + level + "_borders.csv");
             hidden = readMap("maps/" + level + "_hidden_obj.csv");
             // exitMap = readMap("maps/" + level + "_exit.csv");
-            exitMap	= levelData.exit.map;
+            exitMap = levelData.exit.map;
             readExit();
 
             // mapp = readMap("maps/" + level + "_map.csv");
             mapp = levelData.texture.map;
-          
+
             // playerPos = getPlayer("maps/" + level + "_entities.csv");
-            // get playerpos from levelData.entities 
+            // get playerpos from levelData.entities
             playerPos = getPlayer(levelData.entities.map);
 
             // print playerPos
             System.out.println("playerPos: " + playerPos.x + " " + playerPos.y);
-          }
+      }
 
       private void printMap(int[][] mapp2) {
             for (int i = 0; i < mapp2.length; i++) {
